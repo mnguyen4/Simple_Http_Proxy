@@ -1,0 +1,82 @@
+﻿<Window x:Class="Simple_Http_Proxy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simple_Http_Proxy"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="480" Width="640">
+    <Grid>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabItem Header="Black List">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".9*"/>
+                        <RowDefinition Height=".1*"/>
+                    </Grid.RowDefinitions>
+                    <ListBox x:Name="blackList" BorderThickness="3" Grid.Row="0"></ListBox>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="blackAddBtn" Grid.Column="0">Add</Button>
+                        <Button x:Name="blackEditBtn" Grid.Column="1">Edit</Button>
+                        <Button x:Name="blackRemoveBtn" Grid.Column="2">Remove</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="White List">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".9*"/>
+                        <RowDefinition Height=".1*"/>
+                    </Grid.RowDefinitions>
+                    <ListBox x:Name="whiteList" BorderThickness="3" Grid.Row="0"></ListBox>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="whiteAddBtn" Grid.Column="0">Add</Button>
+                        <Button x:Name="whiteEditBtn" Grid.Column="1">Edit</Button>
+                        <Button x:Name="whiteRemoveBtn" Grid.Column="2">Remove</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Preferences">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".5*"/>
+                        <ColumnDefinition Width=".5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".1*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Host Name/IP Address</Label>
+                    <TextBox x:Name="hostnameTxt" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Text="localhost" />
+                    <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Port</Label>
+                    <TextBox x:Name="portTxt" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Text="8080" />
+                    <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Enable SSL</Label>
+                    <CheckBox x:Name="sslChk" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">SSL Port</Label>
+                    <TextBox x:Name="sslPortTxt" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Text="8443" />
+                    <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Black List Location</Label>
+                    <TextBox x:Name="blackLocationTxt" Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Text="cfg\blacklist.ini" />
+                    <Label Grid.Column="0" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">White List Location</Label>
+                    <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Text="cfg\whitelist.ini" />
+                    <Button x:Name="prefApplyBtn" Grid.Column="0" Grid.Row="6" FontSize="18">Apply</Button>
+                    <Button x:Name="prefResetBtn" Grid.Column="1" Grid.Row="6" FontSize="18">Reset</Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
