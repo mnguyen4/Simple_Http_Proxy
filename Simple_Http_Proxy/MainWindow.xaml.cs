@@ -26,8 +26,15 @@ namespace Simple_Http_Proxy
 
         public MainWindow()
         {
-            storage = AppStorage.getInstance();
             InitializeComponent();
+        }
+
+        /*
+         * Handler for window loaded event.
+         */
+        private void windowContentLoaded(object sender, RoutedEventArgs e)
+        {
+            storage = AppStorage.getInstance();
             readPreferences();
             additionalInit();
         }
@@ -40,6 +47,11 @@ namespace Simple_Http_Proxy
             hostnameTxt.Text = (string)storage.getPreference(hostnameTxt.Name);
             portTxt.Text = (string)storage.getPreference(portTxt.Name);
             sslChk.IsChecked = "true".Equals((string)storage.getPreference(sslChk.Name));
+            // fix for uncheck event not firing on app startup when IsChecked is set to false
+            if (sslChk.IsChecked == false && sslPortTxt.IsEnabled)
+            {
+                sslChkChanged(sslChk, new RoutedEventArgs(CheckBox.UncheckedEvent));
+            }
             sslPortTxt.Text = (string)storage.getPreference(sslPortTxt.Name);
             blackLocationTxt.Text = (string)storage.getPreference(blackLocationTxt.Name);
             whiteLocationTxt.Text = (string)storage.getPreference(whiteLocationTxt.Name);
@@ -51,6 +63,23 @@ namespace Simple_Http_Proxy
         private void readPreferences()
         {
             PreferencesUtil.loadPreferences();
+        }
+
+        /*
+         * Event handler for sslChk.
+         */
+        private void sslChkChanged(object sender, RoutedEventArgs e)
+        {
+            // enable sslPortTxt if sslChk is checked
+            if (sslChk.IsChecked ?? true)
+            {
+                sslPortTxt.IsEnabled = true;
+            }
+            // disable sslPortTxt
+            else
+            {
+                sslPortTxt.IsEnabled = false;
+            }
         }
     }
 }

@@ -30,12 +30,12 @@ namespace Simple_Http_Proxy.Memory
             return instance;
         }
 
-        public Object getPreference(string key)
+        public object getPreference(string key)
         {
             return preferences[key];
         }
 
-        public void setPreference(string key, Object value)
+        public void setPreference(string key, object value)
         {
             preferences[key] = value;
         }
