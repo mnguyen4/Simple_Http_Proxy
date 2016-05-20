@@ -36,6 +36,7 @@ namespace Simple_Http_Proxy
         {
             storage = AppStorage.getInstance();
             readPreferences();
+            readBlacklist();
             additionalInit();
         }
 
@@ -44,6 +45,7 @@ namespace Simple_Http_Proxy
          */
         private void additionalInit()
         {
+            // Initialize Preferences tab
             hostnameTxt.Text = (string)storage.getPreference(hostnameTxt.Name);
             portTxt.Text = (string)storage.getPreference(portTxt.Name);
             sslChk.IsChecked = "true".Equals((string)storage.getPreference(sslChk.Name));
@@ -56,7 +58,15 @@ namespace Simple_Http_Proxy
             blackLocationTxt.Text = (string)storage.getPreference(blackLocationTxt.Name);
             whiteLocationTxt.Text = (string)storage.getPreference(whiteLocationTxt.Name);
         }
-        
+
+        /*
+         * Read blacklist items from blacklist file.
+         */
+        private void readBlacklist()
+        {
+            BlacklistUtil.readBlacklist();
+        }
+
         /*
          * Read preferences from preference file.
          */

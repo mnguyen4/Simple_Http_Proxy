@@ -61,6 +61,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Utils\BlacklistUtil.cs" />
     <Compile Include="Utils\PreferencesUtil.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -105,10 +107,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Resource Include="cfg\blacklist.txt" />
+    <Content Include="cfg\blacklist.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="cfg\whitelist.txt" />
+    <Content Include="cfg\whitelist.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
