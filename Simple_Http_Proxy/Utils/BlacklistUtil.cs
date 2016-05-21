@@ -14,10 +14,10 @@ namespace Simple_Http_Proxy.Utils
         public static void readBlacklist()
         {
             AppStorage storage = AppStorage.getInstance();
-            if (File.Exists((string)storage.getPreference(Constant.BLACK_LOCATION_TEXT)))
+            if (File.Exists(storage.getPreference(Constant.BLACK_LOCATION_TEXT)))
             {
                 string blacklistItem = "";
-                StreamReader blacklistFile = new StreamReader((string)storage.getPreference(Constant.BLACK_LOCATION_TEXT));
+                StreamReader blacklistFile = new StreamReader(storage.getPreference(Constant.BLACK_LOCATION_TEXT));
                 while ((blacklistItem = blacklistFile.ReadLine()) != null)
                 {
                     storage.addBlacklistItem(blacklistItem);
