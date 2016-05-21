@@ -83,6 +83,7 @@ namespace Simple_Http_Proxy
         {
             PreferencesUtil.loadPreferences();
             BlacklistUtil.readBlacklist();
+            WhitelistUtil.readWhitelist();
         }
 
         /*

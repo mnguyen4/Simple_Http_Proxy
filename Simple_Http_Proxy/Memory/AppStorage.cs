@@ -15,11 +15,13 @@ namespace Simple_Http_Proxy.Memory
         private static AppStorage instance;
         private Hashtable preferences;
         private HashSet<string> blacklist;
+        private HashSet<string> whitelist;
 
         private AppStorage()
         {
             preferences = new Hashtable();
             blacklist = new HashSet<string>();
+            whitelist = new HashSet<string>();
         }
 
         public static AppStorage getInstance()
@@ -55,6 +57,21 @@ namespace Simple_Http_Proxy.Memory
         public bool isBlacklistItem(string item)
         {
             return blacklist.Contains(item);
+        }
+
+        public bool addWhitelistItem(string item)
+        {
+            return whitelist.Add(item);
+        }
+
+        public bool removeWhitelistItem(string item)
+        {
+            return whitelist.Remove(item);
+        }
+
+        public bool isWhitelistItem(string item)
+        {
+            return whitelist.Contains(item);
         }
     }
 }
