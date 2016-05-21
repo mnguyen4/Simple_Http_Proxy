@@ -64,6 +64,7 @@
     <Compile Include="Constants\Constant.cs" />
     <Compile Include="Utils\BlacklistUtil.cs" />
     <Compile Include="Utils\PreferencesUtil.cs" />
+    <Compile Include="Utils\WhitelistUtil.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

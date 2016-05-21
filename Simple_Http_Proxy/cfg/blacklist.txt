@@ -1,1 +1,2 @@
-﻿www.test.com
+﻿test.com
+my.website
