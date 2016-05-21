@@ -13,13 +13,13 @@ namespace Simple_Http_Proxy.Memory
     class AppStorage
     {
         private static AppStorage instance;
-        private Hashtable preferences;
+        private Dictionary<string, string> preferences;
         private HashSet<string> blacklist;
         private HashSet<string> whitelist;
 
         private AppStorage()
         {
-            preferences = new Hashtable();
+            preferences = new Dictionary<string, string>();
             blacklist = new HashSet<string>();
             whitelist = new HashSet<string>();
         }
@@ -34,12 +34,12 @@ namespace Simple_Http_Proxy.Memory
             return instance;
         }
 
-        public object getPreference(string key)
+        public string getPreference(string key)
         {
             return preferences[key];
         }
 
-        public void setPreference(string key, object value)
+        public void setPreference(string key, string value)
         {
             preferences[key] = value;
         }

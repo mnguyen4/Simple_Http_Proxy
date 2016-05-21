@@ -1,4 +1,5 @@
-﻿using Simple_Http_Proxy.Memory;
+﻿using Simple_Http_Proxy.Constants;
+using Simple_Http_Proxy.Memory;
 using Simple_Http_Proxy.Utils;
 using System;
 using System.Collections.Generic;
@@ -63,17 +64,17 @@ namespace Simple_Http_Proxy
         private void preferenceTabInit()
         {
             // Initialize Preferences tab
-            hostnameTxt.Text = (string)storage.getPreference(hostnameTxt.Name);
-            portTxt.Text = (string)storage.getPreference(portTxt.Name);
-            sslChk.IsChecked = "true".Equals((string)storage.getPreference(sslChk.Name));
+            hostnameTxt.Text = storage.getPreference(Constant.HOST_NAME_TEXT);
+            portTxt.Text = storage.getPreference(Constant.PORT_TEXT);
+            sslChk.IsChecked = "true".Equals(storage.getPreference(Constant.SSL_CHECK));
             // fix for uncheck event not firing on app startup when IsChecked is set to false
             if (sslChk.IsChecked == false && sslPortTxt.IsEnabled)
             {
                 sslChkChanged(sslChk, new RoutedEventArgs(CheckBox.UncheckedEvent));
             }
-            sslPortTxt.Text = (string)storage.getPreference(sslPortTxt.Name);
-            blackLocationTxt.Text = (string)storage.getPreference(blackLocationTxt.Name);
-            whiteLocationTxt.Text = (string)storage.getPreference(whiteLocationTxt.Name);
+            sslPortTxt.Text = storage.getPreference(Constant.SSL_PORT_TEXT);
+            blackLocationTxt.Text = storage.getPreference(Constant.BLACK_LOCATION_TEXT);
+            whiteLocationTxt.Text = storage.getPreference(Constant.WHITE_LOCATION_TEXT);
         }
 
         /*

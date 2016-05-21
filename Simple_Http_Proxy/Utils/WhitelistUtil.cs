@@ -14,10 +14,10 @@ namespace Simple_Http_Proxy.Utils
         public static void readWhitelist()
         {
             AppStorage storage = AppStorage.getInstance();
-            if (File.Exists((string)storage.getPreference(Constant.WHITE_LOCATION_TEXT)))
+            if (File.Exists(storage.getPreference(Constant.WHITE_LOCATION_TEXT)))
             {
                 string whitelistItem = "";
-                StreamReader whitelistFile = new StreamReader((string)storage.getPreference(Constant.WHITE_LOCATION_TEXT));
+                StreamReader whitelistFile = new StreamReader(storage.getPreference(Constant.WHITE_LOCATION_TEXT));
                 while ((whitelistItem = whitelistFile.ReadLine()) != null)
                 {
                     storage.addWhitelistItem(whitelistItem);
