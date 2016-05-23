@@ -1,6 +1,7 @@
 ﻿using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
 using Simple_Http_Proxy.Utils;
+using Simple_Http_Proxy.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,14 @@ namespace Simple_Http_Proxy
          */
         private void blacklistTabInit()
         {
-            // TODO: Add blacklist tab component init.
+            // populate listbox with blacklist items
+            foreach (string item in storage.getBlacklist())
+            {
+                ListBoxItem blacklistItem = new ListBoxItem();
+                blacklistItem.Content = item;
+                blackList.Items.Add(blacklistItem);
+            }
+            blackList.SelectedIndex = 0;
         }
 
         /*
@@ -102,6 +110,15 @@ namespace Simple_Http_Proxy
             {
                 sslPortTxt.IsEnabled = false;
             }
+        }
+
+        /*
+         * Event handler for blacklist add button.
+         */
+        private void onBlacklistAddBtnClicked(object sender, RoutedEventArgs e)
+        {
+            AddBlacklsitItem addBlacklistItemWindow = new AddBlacklsitItem();
+            addBlacklistItemWindow.Show();
         }
     }
 }
