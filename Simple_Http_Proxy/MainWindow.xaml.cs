@@ -29,15 +29,15 @@ namespace Simple_Http_Proxy
         public MainWindow()
         {
             InitializeComponent();
+            storage = AppStorage.getInstance();
+            readPreferencesAndLists();
         }
 
         /*
-         * Handler for window loaded event.
+         * Handler for window activated event.
          */
-        private void windowContentLoaded(object sender, RoutedEventArgs e)
+        private void onWindowActivated(object sender, EventArgs e)
         {
-            storage = AppStorage.getInstance();
-            readPreferencesAndLists();
             blacklistTabInit();
             whitelistTabInit();
             preferenceTabInit();
@@ -48,6 +48,8 @@ namespace Simple_Http_Proxy
          */
         private void blacklistTabInit()
         {
+            // clear listbox before adding items to it
+            blackList.Items.Clear();
             // populate listbox with blacklist items
             foreach (string item in storage.getBlacklist())
             {
@@ -117,8 +119,18 @@ namespace Simple_Http_Proxy
          */
         private void onBlacklistAddBtnClicked(object sender, RoutedEventArgs e)
         {
-            AddBlacklsitItem addBlacklistItemWindow = new AddBlacklsitItem();
+            AddListItem addBlacklistItemWindow = new AddListItem(Constant.BLACKLIST_OP);
             addBlacklistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for blacklist edit button.
+         */
+        private void onBlacklistEditBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
+            EditListItem editBlacklistItemWindow = new EditListItem(Constant.BLACKLIST_OP, selectedItem);
+            editBlacklistItemWindow.Show();
         }
     }
 }

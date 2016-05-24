@@ -65,8 +65,11 @@
     <Compile Include="Utils\BlacklistUtil.cs" />
     <Compile Include="Utils\PreferencesUtil.cs" />
     <Compile Include="Utils\WhitelistUtil.cs" />
-    <Compile Include="Windows\AddBlacklsitItem.xaml.cs">
-      <DependentUpon>AddBlacklsitItem.xaml</DependentUpon>
+    <Compile Include="Windows\AddListItem.xaml.cs">
+      <DependentUpon>AddListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\EditListItem.xaml.cs">
+      <DependentUpon>EditListItem.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -81,7 +84,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Windows\AddBlacklsitItem.xaml">
+    <Page Include="Windows\AddListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\EditListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
