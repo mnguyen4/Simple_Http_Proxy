@@ -21,9 +21,9 @@
                             <ColumnDefinition Width="0.3*"/>
                             <ColumnDefinition Width="0.3*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="blackAddBtn" Grid.Column="0" Click="onBlacklistAddBtnClicked">Add</Button>
-                        <Button x:Name="blackEditBtn" Grid.Column="1" Click="onBlacklistEditBtnClicked">Edit</Button>
-                        <Button x:Name="blackRemoveBtn" Grid.Column="2">Remove</Button>
+                        <Button x:Name="blackAddBtn" Grid.Column="0" Click="onBlackAddBtnClicked">Add</Button>
+                        <Button x:Name="blackEditBtn" Grid.Column="1" Click="onBlackEditBtnClicked">Edit</Button>
+                        <Button x:Name="blackRemoveBtn" Grid.Column="2" Click="onBlackRemoveBtnClicked">Remove</Button>
                     </Grid>
                 </Grid>
             </TabItem>

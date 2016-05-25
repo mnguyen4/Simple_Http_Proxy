@@ -57,7 +57,19 @@ namespace Simple_Http_Proxy
                 blacklistItem.Content = item;
                 blackList.Items.Add(blacklistItem);
             }
-            blackList.SelectedIndex = 0;
+            // enable edit and remove buttons if there are items in the blacklist
+            if (blackList.Items.Count > 0)
+            {
+                blackList.SelectedIndex = 0;
+                blackEditBtn.IsEnabled = true;
+                blackRemoveBtn.IsEnabled = true;
+            }
+            // disable the buttons otherwise
+            else
+            {
+                blackEditBtn.IsEnabled = false;
+                blackRemoveBtn.IsEnabled = false;
+            }
         }
 
         /*
@@ -117,7 +129,7 @@ namespace Simple_Http_Proxy
         /*
          * Event handler for blacklist add button.
          */
-        private void onBlacklistAddBtnClicked(object sender, RoutedEventArgs e)
+        private void onBlackAddBtnClicked(object sender, RoutedEventArgs e)
         {
             AddListItem addBlacklistItemWindow = new AddListItem(Constant.BLACKLIST_OP);
             addBlacklistItemWindow.Show();
@@ -126,11 +138,21 @@ namespace Simple_Http_Proxy
         /*
          * Event handler for blacklist edit button.
          */
-        private void onBlacklistEditBtnClicked(object sender, RoutedEventArgs e)
+        private void onBlackEditBtnClicked(object sender, RoutedEventArgs e)
         {
             string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
             EditListItem editBlacklistItemWindow = new EditListItem(Constant.BLACKLIST_OP, selectedItem);
             editBlacklistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for blacklist remove button.
+         */
+        private void onBlackRemoveBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
+            DeleteListItem deleteListItemWindow = new DeleteListItem(Constant.BLACKLIST_OP, selectedItem);
+            deleteListItemWindow.Show();
         }
     }
 }

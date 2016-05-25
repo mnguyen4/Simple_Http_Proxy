@@ -68,6 +68,9 @@
     <Compile Include="Windows\AddListItem.xaml.cs">
       <DependentUpon>AddListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\DeleteListItem.xaml.cs">
+      <DependentUpon>DeleteListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\EditListItem.xaml.cs">
       <DependentUpon>EditListItem.xaml</DependentUpon>
     </Compile>
@@ -85,6 +88,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\AddListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\DeleteListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
