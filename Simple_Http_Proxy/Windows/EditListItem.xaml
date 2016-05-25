@@ -1,0 +1,31 @@
+﻿<Window x:Class="Simple_Http_Proxy.Windows.EditListItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simple_Http_Proxy.Windows"
+        mc:Ignorable="d"
+        Title="Edit List Item" Height="100" Width="400" Activated="onWindowActivated">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".6*" />
+            <RowDefinition Height=".4*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".4*" />
+                <ColumnDefinition Width=".6*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" FontSize="14">Domain<LineBreak/>(Ex: mydomain.com)</TextBlock>
+            <TextBox x:Name="listDomainTxt" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".5*" />
+                <ColumnDefinition Width=".5*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="listItemConfirmBtn" Grid.Column="0" Grid.Row="1" FontSize="14" Click="onListItemConfirmBtnClicked">Confirm</Button>
+            <Button x:Name="listItemCancelBtn" Grid.Column="1" Grid.Row="1" FontSize="14" Click="onListItemCancelBtnClicked">Cancel</Button>
+        </Grid>
+    </Grid>
+</Window>

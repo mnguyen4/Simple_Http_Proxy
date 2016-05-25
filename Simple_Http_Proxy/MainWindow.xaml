@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simple_Http_Proxy"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="640" Loaded="windowContentLoaded">
+        Title="Simple Http Proxy" Height="480" Width="640" Activated="onWindowActivated">
     <Grid>
         <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TabItem Header="Black List">
@@ -21,9 +21,9 @@
                             <ColumnDefinition Width="0.3*"/>
                             <ColumnDefinition Width="0.3*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="blackAddBtn" Grid.Column="0">Add</Button>
-                        <Button x:Name="blackEditBtn" Grid.Column="1">Edit</Button>
-                        <Button x:Name="blackRemoveBtn" Grid.Column="2">Remove</Button>
+                        <Button x:Name="blackAddBtn" Grid.Column="0" Click="onBlackAddBtnClicked">Add</Button>
+                        <Button x:Name="blackEditBtn" Grid.Column="1" Click="onBlackEditBtnClicked">Edit</Button>
+                        <Button x:Name="blackRemoveBtn" Grid.Column="2" Click="onBlackRemoveBtnClicked">Remove</Button>
                     </Grid>
                 </Grid>
             </TabItem>

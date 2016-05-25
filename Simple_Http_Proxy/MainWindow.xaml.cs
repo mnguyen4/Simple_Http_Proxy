@@ -1,6 +1,7 @@
 ﻿using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
 using Simple_Http_Proxy.Utils;
+using Simple_Http_Proxy.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,15 +29,15 @@ namespace Simple_Http_Proxy
         public MainWindow()
         {
             InitializeComponent();
+            storage = AppStorage.getInstance();
+            readPreferencesAndLists();
         }
 
         /*
-         * Handler for window loaded event.
+         * Handler for window activated event.
          */
-        private void windowContentLoaded(object sender, RoutedEventArgs e)
+        private void onWindowActivated(object sender, EventArgs e)
         {
-            storage = AppStorage.getInstance();
-            readPreferencesAndLists();
             blacklistTabInit();
             whitelistTabInit();
             preferenceTabInit();
@@ -47,7 +48,28 @@ namespace Simple_Http_Proxy
          */
         private void blacklistTabInit()
         {
-            // TODO: Add blacklist tab component init.
+            // clear listbox before adding items to it
+            blackList.Items.Clear();
+            // populate listbox with blacklist items
+            foreach (string item in storage.getBlacklist())
+            {
+                ListBoxItem blacklistItem = new ListBoxItem();
+                blacklistItem.Content = item;
+                blackList.Items.Add(blacklistItem);
+            }
+            // enable edit and remove buttons if there are items in the blacklist
+            if (blackList.Items.Count > 0)
+            {
+                blackList.SelectedIndex = 0;
+                blackEditBtn.IsEnabled = true;
+                blackRemoveBtn.IsEnabled = true;
+            }
+            // disable the buttons otherwise
+            else
+            {
+                blackEditBtn.IsEnabled = false;
+                blackRemoveBtn.IsEnabled = false;
+            }
         }
 
         /*
@@ -102,6 +124,35 @@ namespace Simple_Http_Proxy
             {
                 sslPortTxt.IsEnabled = false;
             }
+        }
+
+        /*
+         * Event handler for blacklist add button.
+         */
+        private void onBlackAddBtnClicked(object sender, RoutedEventArgs e)
+        {
+            AddListItem addBlacklistItemWindow = new AddListItem(Constant.BLACKLIST_OP);
+            addBlacklistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for blacklist edit button.
+         */
+        private void onBlackEditBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
+            EditListItem editBlacklistItemWindow = new EditListItem(Constant.BLACKLIST_OP, selectedItem);
+            editBlacklistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for blacklist remove button.
+         */
+        private void onBlackRemoveBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
+            DeleteListItem deleteListItemWindow = new DeleteListItem(Constant.BLACKLIST_OP, selectedItem);
+            deleteListItemWindow.Show();
         }
     }
 }

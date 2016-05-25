@@ -59,6 +59,11 @@ namespace Simple_Http_Proxy.Memory
             return blacklist.Contains(item);
         }
 
+        public HashSet<string> getBlacklist()
+        {
+            return blacklist;
+        }
+
         public bool addWhitelistItem(string item)
         {
             return whitelist.Add(item);
