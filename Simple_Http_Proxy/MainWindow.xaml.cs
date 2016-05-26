@@ -77,7 +77,28 @@ namespace Simple_Http_Proxy
          */
         private void whitelistTabInit()
         {
-            // TODO: Add whitelist tab component init.
+            // Clear listbox
+            whiteList.Items.Clear();
+            // populate listbox
+            foreach (string item in storage.getWhitelist())
+            {
+                ListBoxItem whitelistItem = new ListBoxItem();
+                whitelistItem.Content = item;
+                whiteList.Items.Add(whitelistItem);
+            }
+            // enable edit and remove if there are items in the whitelist
+            if (whiteList.Items.Count > 0)
+            {
+                whiteList.SelectedIndex = 0;
+                whiteEditBtn.IsEnabled = true;
+                whiteRemoveBtn.IsEnabled = true;
+            }
+            // disable edit and remove buttons
+            else
+            {
+                whiteEditBtn.IsEnabled = false;
+                whiteRemoveBtn.IsEnabled = false;
+            }
         }
 
         /*

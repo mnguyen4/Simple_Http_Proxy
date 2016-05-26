@@ -78,5 +78,10 @@ namespace Simple_Http_Proxy.Memory
         {
             return whitelist.Contains(item);
         }
+
+        public HashSet<string> getWhitelist()
+        {
+            return whitelist;
+        }
     }
 }
