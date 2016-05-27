@@ -77,7 +77,28 @@ namespace Simple_Http_Proxy
          */
         private void whitelistTabInit()
         {
-            // TODO: Add whitelist tab component init.
+            // Clear listbox
+            whiteList.Items.Clear();
+            // populate listbox
+            foreach (string item in storage.getWhitelist())
+            {
+                ListBoxItem whitelistItem = new ListBoxItem();
+                whitelistItem.Content = item;
+                whiteList.Items.Add(whitelistItem);
+            }
+            // enable edit and remove if there are items in the whitelist
+            if (whiteList.Items.Count > 0)
+            {
+                whiteList.SelectedIndex = 0;
+                whiteEditBtn.IsEnabled = true;
+                whiteRemoveBtn.IsEnabled = true;
+            }
+            // disable edit and remove buttons
+            else
+            {
+                whiteEditBtn.IsEnabled = false;
+                whiteRemoveBtn.IsEnabled = false;
+            }
         }
 
         /*
@@ -153,6 +174,35 @@ namespace Simple_Http_Proxy
             string selectedItem = ((ListBoxItem)blackList.SelectedItem).Content.ToString();
             DeleteListItem deleteListItemWindow = new DeleteListItem(Constant.BLACKLIST_OP, selectedItem);
             deleteListItemWindow.Show();
+        }
+
+        /*
+         * Event handler for whitelist add button.
+         */
+         private void onWhiteAddBtnClicked(object sender, RoutedEventArgs e)
+        {
+            AddListItem addWhitelistItemWindow = new AddListItem(Constant.WHITELIST_OP);
+            addWhitelistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for whitelist edit button.
+         */
+         private void onWhiteEditBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)whiteList.SelectedItem).Content.ToString();
+            EditListItem editWhitelistItemWindow = new EditListItem(Constant.WHITELIST_OP, selectedItem);
+            editWhitelistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for whitelist remove button.
+         */
+         private void onWhiteRemoveBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)whiteList.SelectedItem).Content.ToString();
+            DeleteListItem deleteWhitelistItemWindow = new DeleteListItem(Constant.WHITELIST_OP, selectedItem);
+            deleteWhitelistItemWindow.Show();
         }
     }
 }
