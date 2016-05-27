@@ -40,9 +40,9 @@
                             <ColumnDefinition Width="0.3*"/>
                             <ColumnDefinition Width="0.3*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="whiteAddBtn" Grid.Column="0">Add</Button>
-                        <Button x:Name="whiteEditBtn" Grid.Column="1">Edit</Button>
-                        <Button x:Name="whiteRemoveBtn" Grid.Column="2">Remove</Button>
+                        <Button x:Name="whiteAddBtn" Grid.Column="0" Click="onWhiteAddBtnClicked">Add</Button>
+                        <Button x:Name="whiteEditBtn" Grid.Column="1" Click="onWhiteEditBtnClicked">Edit</Button>
+                        <Button x:Name="whiteRemoveBtn" Grid.Column="2" Click="onWhiteRemoveBtnClicked">Remove</Button>
                     </Grid>
                 </Grid>
             </TabItem>

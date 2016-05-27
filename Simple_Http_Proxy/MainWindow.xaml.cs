@@ -175,5 +175,34 @@ namespace Simple_Http_Proxy
             DeleteListItem deleteListItemWindow = new DeleteListItem(Constant.BLACKLIST_OP, selectedItem);
             deleteListItemWindow.Show();
         }
+
+        /*
+         * Event handler for whitelist add button.
+         */
+         private void onWhiteAddBtnClicked(object sender, RoutedEventArgs e)
+        {
+            AddListItem addWhitelistItemWindow = new AddListItem(Constant.WHITELIST_OP);
+            addWhitelistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for whitelist edit button.
+         */
+         private void onWhiteEditBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)whiteList.SelectedItem).Content.ToString();
+            EditListItem editWhitelistItemWindow = new EditListItem(Constant.WHITELIST_OP, selectedItem);
+            editWhitelistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for whitelist remove button.
+         */
+         private void onWhiteRemoveBtnClicked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = ((ListBoxItem)whiteList.SelectedItem).Content.ToString();
+            DeleteListItem deleteWhitelistItemWindow = new DeleteListItem(Constant.WHITELIST_OP, selectedItem);
+            deleteWhitelistItemWindow.Show();
+        }
     }
 }
