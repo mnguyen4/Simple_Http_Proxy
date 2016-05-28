@@ -118,6 +118,8 @@ namespace Simple_Http_Proxy
             sslPortTxt.Text = storage.getPreference(Constant.SSL_PORT_TEXT);
             blackLocationTxt.Text = storage.getPreference(Constant.BLACK_LOCATION_TEXT);
             whiteLocationTxt.Text = storage.getPreference(Constant.WHITE_LOCATION_TEXT);
+            prefApplyBtn.IsEnabled = false;
+            prefResetBtn.IsEnabled = false;
         }
 
         /*
@@ -145,6 +147,10 @@ namespace Simple_Http_Proxy
             {
                 sslPortTxt.IsEnabled = false;
             }
+            // preferences changed, set dirty
+            storage.setPreferencesDirty(true);
+            prefApplyBtn.IsEnabled = true;
+            prefResetBtn.IsEnabled = true;
         }
 
         /*
@@ -203,6 +209,29 @@ namespace Simple_Http_Proxy
             string selectedItem = ((ListBoxItem)whiteList.SelectedItem).Content.ToString();
             DeleteListItem deleteWhitelistItemWindow = new DeleteListItem(Constant.WHITELIST_OP, selectedItem);
             deleteWhitelistItemWindow.Show();
+        }
+
+        /*
+         * Event handler for tab change.
+         */
+        private void onTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // discard changes to preferences if navigating away from preferences panel
+            if (!preferencesTab.Equals(tabControl.SelectedContent) && storage.getPreferencesDirty())
+            {
+                preferenceTabInit();
+            }
+        }
+
+        /*
+         * Event handler for preferences changed.
+         */
+         private void onPreferencesChanged(object sender, TextChangedEventArgs e)
+        {
+            // preferences changed, set dirty
+            storage.setPreferencesDirty(true);
+            prefApplyBtn.IsEnabled = true;
+            prefResetBtn.IsEnabled = true;
         }
     }
 }

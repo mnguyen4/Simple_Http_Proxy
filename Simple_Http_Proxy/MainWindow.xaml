@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Simple Http Proxy" Height="480" Width="640" Activated="onWindowActivated">
     <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TabItem Header="Black List">
+        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="onTabControlSelectionChanged">
+            <TabItem x:Name="blacklistTab" Header="Black List">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height=".9*"/>
@@ -27,7 +27,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="White List">
+            <TabItem x:Name="whitelistTab" Header="White List">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height=".9*"/>
@@ -46,7 +46,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Preferences">
+            <TabItem x:Name="preferencesTab" Header="Preferences">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width=".5*"/>
@@ -62,17 +62,17 @@
                         <RowDefinition Height=".1*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Host Name/IP Address</Label>
-                    <TextBox x:Name="hostnameTxt" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                    <TextBox x:Name="hostnameTxt" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Port</Label>
-                    <TextBox x:Name="portTxt" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                    <TextBox x:Name="portTxt" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Enable SSL</Label>
                     <CheckBox x:Name="sslChk" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="sslChkChanged" Unchecked="sslChkChanged" />
                     <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">SSL Port</Label>
-                    <TextBox x:Name="sslPortTxt" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                    <TextBox x:Name="sslPortTxt" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Black List Location</Label>
-                    <TextBox x:Name="blackLocationTxt" Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                    <TextBox x:Name="blackLocationTxt" Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Label Grid.Column="0" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">White List Location</Label>
-                    <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                    <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Button x:Name="prefApplyBtn" Grid.Column="0" Grid.Row="6" FontSize="18">Apply</Button>
                     <Button x:Name="prefResetBtn" Grid.Column="1" Grid.Row="6" FontSize="18">Reset</Button>
                 </Grid>
