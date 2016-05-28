@@ -147,10 +147,7 @@ namespace Simple_Http_Proxy
             {
                 sslPortTxt.IsEnabled = false;
             }
-            // preferences changed, set dirty
-            storage.setPreferencesDirty(true);
-            prefApplyBtn.IsEnabled = true;
-            prefResetBtn.IsEnabled = true;
+            onPreferencesChanged(null, null);
         }
 
         /*
@@ -232,6 +229,22 @@ namespace Simple_Http_Proxy
             storage.setPreferencesDirty(true);
             prefApplyBtn.IsEnabled = true;
             prefResetBtn.IsEnabled = true;
+        }
+
+        /*
+         * Event handler for apply button
+         */
+        private void onPrefApplyBtnClicked(object sender, RoutedEventArgs e)
+        {
+            // set new preferences values
+            storage.setPreference(Constant.HOST_NAME_TEXT, hostnameTxt.Text);
+            storage.setPreference(Constant.PORT_TEXT, portTxt.Text);
+            storage.setPreference(Constant.SSL_CHECK, (bool)sslChk.IsChecked ? "true" : "false");
+            storage.setPreference(Constant.SSL_PORT_TEXT, sslPortTxt.Text);
+            storage.setPreference(Constant.BLACK_LOCATION_TEXT, blackLocationTxt.Text);
+            storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
+            prefApplyBtn.IsEnabled = false;
+            prefResetBtn.IsEnabled = false;
         }
     }
 }
