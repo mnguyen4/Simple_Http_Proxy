@@ -241,6 +241,7 @@ namespace Simple_Http_Proxy
             storage.setPreference(Constant.SSL_PORT_TEXT, sslPortTxt.Text);
             storage.setPreference(Constant.BLACK_LOCATION_TEXT, blackLocationTxt.Text);
             storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
+            storage.setPreferencesDirty(false);
             prefApplyBtn.IsEnabled = false;
         }
 
@@ -250,6 +251,7 @@ namespace Simple_Http_Proxy
          private void onPrefResetBtnClicked(object sender, RoutedEventArgs e)
         {
             PreferencesUtil.loadPreferences();
+            storage.setPreferencesDirty(false);
             preferenceTabInit();
         }
     }
