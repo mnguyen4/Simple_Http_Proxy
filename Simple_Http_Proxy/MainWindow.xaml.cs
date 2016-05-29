@@ -119,7 +119,6 @@ namespace Simple_Http_Proxy
             blackLocationTxt.Text = storage.getPreference(Constant.BLACK_LOCATION_TEXT);
             whiteLocationTxt.Text = storage.getPreference(Constant.WHITE_LOCATION_TEXT);
             prefApplyBtn.IsEnabled = false;
-            prefResetBtn.IsEnabled = false;
         }
 
         /*
@@ -228,11 +227,10 @@ namespace Simple_Http_Proxy
             // preferences changed, set dirty
             storage.setPreferencesDirty(true);
             prefApplyBtn.IsEnabled = true;
-            prefResetBtn.IsEnabled = true;
         }
 
         /*
-         * Event handler for apply button
+         * Event handler for apply button.
          */
         private void onPrefApplyBtnClicked(object sender, RoutedEventArgs e)
         {
@@ -244,7 +242,15 @@ namespace Simple_Http_Proxy
             storage.setPreference(Constant.BLACK_LOCATION_TEXT, blackLocationTxt.Text);
             storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
             prefApplyBtn.IsEnabled = false;
-            prefResetBtn.IsEnabled = false;
+        }
+
+        /*
+         * Event handler for reset default button.
+         */
+         private void onPrefResetBtnClicked(object sender, RoutedEventArgs e)
+        {
+            PreferencesUtil.loadPreferences();
+            preferenceTabInit();
         }
     }
 }

@@ -74,7 +74,7 @@
                     <Label Grid.Column="0" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">White List Location</Label>
                     <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" TextChanged="onPreferencesChanged" />
                     <Button x:Name="prefApplyBtn" Grid.Column="0" Grid.Row="6" FontSize="18" Click="onPrefApplyBtnClicked">Apply</Button>
-                    <Button x:Name="prefResetBtn" Grid.Column="1" Grid.Row="6" FontSize="18">Reset Defaults</Button>
+                    <Button x:Name="prefResetBtn" Grid.Column="1" Grid.Row="6" FontSize="18" Click="onPrefResetBtnClicked">Reset Defaults</Button>
                 </Grid>
             </TabItem>
         </TabControl>
