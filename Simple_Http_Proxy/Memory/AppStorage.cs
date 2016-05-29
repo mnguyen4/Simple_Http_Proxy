@@ -16,12 +16,14 @@ namespace Simple_Http_Proxy.Memory
         private Dictionary<string, string> preferences;
         private HashSet<string> blacklist;
         private HashSet<string> whitelist;
+        private bool preferencesDirty;
 
         private AppStorage()
         {
             preferences = new Dictionary<string, string>();
             blacklist = new HashSet<string>();
             whitelist = new HashSet<string>();
+            preferencesDirty = false;
         }
 
         public static AppStorage getInstance()
@@ -82,6 +84,16 @@ namespace Simple_Http_Proxy.Memory
         public HashSet<string> getWhitelist()
         {
             return whitelist;
+        }
+
+        public bool getPreferencesDirty()
+        {
+            return preferencesDirty;
+        }
+
+        public void setPreferencesDirty(bool isDirty)
+        {
+            preferencesDirty = isDirty;
         }
     }
 }
