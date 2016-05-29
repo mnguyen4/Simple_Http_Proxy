@@ -1,5 +1,6 @@
 ﻿using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
+using Simple_Http_Proxy.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +49,7 @@ namespace Simple_Http_Proxy.Windows
             if (Constant.BLACKLIST_OP.Equals(panelOp))
             {
                 storage.removeBlacklistItem(listItem);
+                BlacklistUtil.writeBlackList();
             }
             else if (Constant.WHITELIST_OP.Equals(panelOp))
             {

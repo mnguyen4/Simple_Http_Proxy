@@ -25,5 +25,26 @@ namespace Simple_Http_Proxy.Utils
                 blacklistFile.Close();
             }
         }
+
+        public static void writeBlackList()
+        {
+            AppStorage storage = AppStorage.getInstance();
+            StreamWriter blacklistFile = new StreamWriter(storage.getPreference(Constant.BLACK_LOCATION_TEXT),false);
+            try
+            {
+                foreach (string blacklistItem in storage.getBlacklist())
+                {
+                    blacklistFile.WriteLineAsync(blacklistItem);
+                }
+            }
+            catch(Exception e) when (e is ObjectDisposedException || e is InvalidOperationException)
+            {
+                // TODO: Add error logging.
+            }
+            finally
+            {
+                blacklistFile.Close();
+            }
+        }
     }
 }
