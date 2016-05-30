@@ -60,6 +60,7 @@ namespace Simple_Http_Proxy.Windows
                 {
                     storage.removeWhitelistItem(oldItem);
                     storage.addWhitelistItem(listItem);
+                    WhitelistUtil.writeWhitelist();
                 }
                 this.Close();
             }

@@ -54,6 +54,7 @@ namespace Simple_Http_Proxy.Windows
             else if (Constant.WHITELIST_OP.Equals(panelOp))
             {
                 storage.removeWhitelistItem(listItem);
+                WhitelistUtil.writeWhitelist();
             }
             this.Close();
         }
