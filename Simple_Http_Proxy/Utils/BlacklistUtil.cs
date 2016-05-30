@@ -29,7 +29,7 @@ namespace Simple_Http_Proxy.Utils
         public static void writeBlackList()
         {
             AppStorage storage = AppStorage.getInstance();
-            StreamWriter blacklistFile = new StreamWriter(storage.getPreference(Constant.BLACK_LOCATION_TEXT),false);
+            StreamWriter blacklistFile = new StreamWriter(storage.getPreference(Constant.BLACK_LOCATION_TEXT), false);
             try
             {
                 foreach (string blacklistItem in storage.getBlacklist())

@@ -25,5 +25,26 @@ namespace Simple_Http_Proxy.Utils
                 whitelistFile.Close();
             }
         }
+
+        public static void writeWhitelist()
+        {
+            AppStorage storage = AppStorage.getInstance();
+            StreamWriter whitelistFile = new StreamWriter(storage.getPreference(Constant.WHITE_LOCATION_TEXT), false);
+            try
+            {
+                foreach (string whitelistItem in storage.getWhitelist())
+                {
+                    whitelistFile.WriteLineAsync(whitelistItem);
+                }
+            }
+            catch (Exception e) when (e is ObjectDisposedException || e is InvalidOperationException)
+            {
+                // TODO: Add error logging.
+            }
+            finally
+            {
+                whitelistFile.Close();
+            }
+        }
     }
 }
