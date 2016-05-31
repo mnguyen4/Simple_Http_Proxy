@@ -243,6 +243,7 @@ namespace Simple_Http_Proxy
             storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
             storage.setPreferencesDirty(false);
             prefApplyBtn.IsEnabled = false;
+            PreferencesUtil.writePreferences();
         }
 
         /*

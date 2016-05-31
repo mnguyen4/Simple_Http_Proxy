@@ -1,4 +1,5 @@
-﻿using Simple_Http_Proxy.Memory;
+﻿using Simple_Http_Proxy.Constants;
+using Simple_Http_Proxy.Memory;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,18 +13,18 @@ namespace Simple_Http_Proxy.Utils
 {
     class PreferencesUtil
     {
-        private const string PREFERENCES_PATH = "cfg\\preferences.xml";
         private const string SETTINGS_ELEMENT = "appSettings";
         private const string KEY = "key";
         private const string VALUE = "value";
 
         /*
-         * Load preferences front either a custom preferences.xml or from the App.config.
+         * Load preferences from either a custom preferences.xml or from the App.config.
          */
         public static void loadPreferences()
         {
+            AppStorage storage = AppStorage.getInstance();
             // read custom preferences if exists
-            if (File.Exists(PREFERENCES_PATH)) {
+            if (File.Exists(Constant.CONFIG_FILE)) {
                 readPreferencesXml();
             }
             // read default preferences
@@ -34,19 +35,56 @@ namespace Simple_Http_Proxy.Utils
         }
 
         /*
+         * Write preferences to a custom preferences.xml file.
+         */
+        public static void writePreferences()
+        {
+            AppStorage storage = AppStorage.getInstance();
+            // if preferences file doesn't exist, create it
+            if (!File.Exists(Constant.CONFIG_FILE))
+            {
+                XmlWriter preferenceWriter = XmlWriter.Create(Constant.CONFIG_FILE);
+                preferenceWriter.WriteStartDocument();
+                preferenceWriter.WriteStartElement("configuration");
+                preferenceWriter.WriteStartElement("appSettings");
+                foreach (string key in storage.getPreferences().Keys)
+                {
+                    preferenceWriter.WriteStartElement("add");
+                    preferenceWriter.WriteAttributeString("key", key);
+                    preferenceWriter.WriteAttributeString("value", storage.getPreference(key));
+                    preferenceWriter.WriteEndElement();
+                }
+                preferenceWriter.WriteEndElement();
+                preferenceWriter.WriteEndElement();
+                preferenceWriter.WriteEndDocument();
+                preferenceWriter.Close();
+            }
+            else
+            {
+                var preferencesMap = new ExeConfigurationFileMap();
+                preferencesMap.ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Constant.CONFIG_FILE);
+                Configuration preferencesFile = ConfigurationManager.OpenMappedExeConfiguration(preferencesMap, ConfigurationUserLevel.None);
+                foreach (string key in storage.getPreferences().Keys)
+                {
+                    preferencesFile.AppSettings.Settings[key].Value = storage.getPreference(key);
+                }
+                preferencesFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("appSettings");
+            }
+        }
+
+        /*
          * Retrieve the setting value from preferences.xml.
          */
          private static void readPreferencesXml()
         {
             AppStorage storage = AppStorage.getInstance();
-            StreamReader reader = new StreamReader(new FileStream(PREFERENCES_PATH, FileMode.Open, FileAccess.Read, FileShare.Read));
-            XmlDocument preferences = new XmlDocument();
-            preferences.LoadXml(reader.ReadToEnd());
-            reader.Close();
-            XmlElement appSettings = preferences.GetElementById(SETTINGS_ELEMENT);
-            foreach (XmlNode add in appSettings.ChildNodes)
+            var preferencesMap = new ExeConfigurationFileMap();
+            preferencesMap.ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Constant.CONFIG_FILE);
+            Configuration preferencesFile = ConfigurationManager.OpenMappedExeConfiguration(preferencesMap, ConfigurationUserLevel.None);
+            foreach (string key in preferencesFile.AppSettings.Settings.AllKeys)
             {
-                storage.setPreference(add.Attributes["key"].Value, add.Attributes["value"].Value);
+                storage.setPreference(key, preferencesFile.AppSettings.Settings[key].Value);
             }
         }
 

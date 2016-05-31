@@ -19,5 +19,8 @@ namespace Simple_Http_Proxy.Constants
         // Common constants
         public const string BLACKLIST_OP = "blacklist";
         public const string WHITELIST_OP = "whitelist";
+
+        // Misc constants
+        public const string CONFIG_FILE = "cfg\\preferences.xml";
     }
 }
