@@ -46,6 +46,11 @@ namespace Simple_Http_Proxy.Memory
             preferences[key] = value;
         }
 
+        public Dictionary<string, string> getPreferences()
+        {
+            return preferences;
+        }
+
         public bool addBlacklistItem(string item)
         {
             return blacklist.Add(item);

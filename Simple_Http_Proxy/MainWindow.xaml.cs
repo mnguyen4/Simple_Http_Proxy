@@ -243,6 +243,7 @@ namespace Simple_Http_Proxy
             storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
             storage.setPreferencesDirty(false);
             prefApplyBtn.IsEnabled = false;
+            PreferencesUtil.writePreferences();
         }
 
         /*
@@ -250,7 +251,7 @@ namespace Simple_Http_Proxy
          */
          private void onPrefResetBtnClicked(object sender, RoutedEventArgs e)
         {
-            PreferencesUtil.loadPreferences();
+            PreferencesUtil.deletePreferencesXml();
             storage.setPreferencesDirty(false);
             preferenceTabInit();
         }
