@@ -24,7 +24,7 @@ namespace Simple_Http_Proxy.Utils
         {
             AppStorage storage = AppStorage.getInstance();
             // read custom preferences if exists
-            if (File.Exists(Constant.CONFIG_FILE)) {
+            if (File.Exists(Constant.CONFIG_FILE_LOCATION)) {
                 readPreferencesXml();
             }
             // read default preferences
@@ -41,9 +41,9 @@ namespace Simple_Http_Proxy.Utils
         {
             AppStorage storage = AppStorage.getInstance();
             // if preferences file doesn't exist, create it
-            if (!File.Exists(Constant.CONFIG_FILE))
+            if (!File.Exists(Constant.CONFIG_FILE_LOCATION))
             {
-                XmlWriter preferenceWriter = XmlWriter.Create(Constant.CONFIG_FILE);
+                XmlWriter preferenceWriter = XmlWriter.Create(Constant.CONFIG_FILE_LOCATION);
                 preferenceWriter.WriteStartDocument();
                 preferenceWriter.WriteStartElement("configuration");
                 preferenceWriter.WriteStartElement("appSettings");
@@ -59,28 +59,44 @@ namespace Simple_Http_Proxy.Utils
                 preferenceWriter.WriteEndDocument();
                 preferenceWriter.Close();
             }
+            // otherwise, modify the existing one
             else
             {
                 var preferencesMap = new ExeConfigurationFileMap();
-                preferencesMap.ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Constant.CONFIG_FILE);
+                // set the location of the preferences file
+                preferencesMap.ExeConfigFilename = Constant.CONFIG_FILE_LOCATION;
+                // read the preferences
                 Configuration preferencesFile = ConfigurationManager.OpenMappedExeConfiguration(preferencesMap, ConfigurationUserLevel.None);
                 foreach (string key in storage.getPreferences().Keys)
                 {
                     preferencesFile.AppSettings.Settings[key].Value = storage.getPreference(key);
                 }
                 preferencesFile.Save(ConfigurationSaveMode.Modified);
+                // Force reread from disk on next access
                 ConfigurationManager.RefreshSection("appSettings");
             }
         }
 
         /*
+         * Delete the custom preferences file and use the default configurations.
+         */
+        public static void deletePreferencesXml()
+        {
+            if (File.Exists(Constant.CONFIG_FILE_LOCATION))
+            {
+                File.Delete(Constant.CONFIG_FILE_LOCATION);
+            }
+            readDefaultPreferences();
+        }
+
+        /*
          * Retrieve the setting value from preferences.xml.
          */
-         private static void readPreferencesXml()
+        private static void readPreferencesXml()
         {
             AppStorage storage = AppStorage.getInstance();
             var preferencesMap = new ExeConfigurationFileMap();
-            preferencesMap.ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Constant.CONFIG_FILE);
+            preferencesMap.ExeConfigFilename = Constant.CONFIG_FILE_LOCATION;
             Configuration preferencesFile = ConfigurationManager.OpenMappedExeConfiguration(preferencesMap, ConfigurationUserLevel.None);
             foreach (string key in preferencesFile.AppSettings.Settings.AllKeys)
             {

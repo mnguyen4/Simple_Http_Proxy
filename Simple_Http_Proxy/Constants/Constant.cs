@@ -21,6 +21,6 @@ namespace Simple_Http_Proxy.Constants
         public const string WHITELIST_OP = "whitelist";
 
         // Misc constants
-        public const string CONFIG_FILE = "cfg\\preferences.xml";
+        public const string CONFIG_FILE_LOCATION = "cfg\\preferences.xml";
     }
 }

@@ -251,7 +251,7 @@ namespace Simple_Http_Proxy
          */
          private void onPrefResetBtnClicked(object sender, RoutedEventArgs e)
         {
-            PreferencesUtil.loadPreferences();
+            PreferencesUtil.deletePreferencesXml();
             storage.setPreferencesDirty(false);
             preferenceTabInit();
         }
