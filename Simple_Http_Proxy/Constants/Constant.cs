@@ -19,6 +19,8 @@ namespace Simple_Http_Proxy.Constants
         // Common constants
         public const string BLACKLIST_OP = "blacklist";
         public const string WHITELIST_OP = "whitelist";
+        public const string TRUE = "true";
+        public const string FALSE = "false";
 
         // Misc constants
         public const string CONFIG_FILE_LOCATION = "cfg\\preferences.xml";
