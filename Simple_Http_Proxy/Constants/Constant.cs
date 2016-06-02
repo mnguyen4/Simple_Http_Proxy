@@ -16,6 +16,10 @@ namespace Simple_Http_Proxy.Constants
         public const string BLACK_LOCATION_TEXT = "blackLocationTxt";
         public const string WHITE_LOCATION_TEXT = "whiteLocationTxt";
 
+        // Proxy constants
+        public const string WEB_REQUEST = "webRequest";
+        public const string ORIGINAL_CONTEXT = "originalContext";
+
         // Common constants
         public const string BLACKLIST_OP = "blacklist";
         public const string WHITELIST_OP = "whitelist";

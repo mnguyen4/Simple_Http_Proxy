@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simple_Http_Proxy.Proxy;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,10 @@ namespace Simple_Http_Proxy
     /// </summary>
     public partial class App : Application
     {
+        private void onApplicationExit(object sender, ExitEventArgs e)
+        {
+            HttpProxyListener proxyListener = HttpProxyListener.getInstance();
+            proxyListener.stopListener();
+        }
     }
 }
