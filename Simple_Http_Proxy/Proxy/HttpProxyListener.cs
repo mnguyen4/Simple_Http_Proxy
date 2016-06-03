@@ -53,11 +53,11 @@ namespace Simple_Http_Proxy.Proxy
         private void configureHttpListener()
         {
             AppStorage storage = AppStorage.getInstance();
-            listener.Prefixes.Add("http://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT));
+            listener.Prefixes.Add("http://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT) + "/");
             string enableSsl = storage.getPreference(Constant.SSL_CHECK);
             if (Constant.TRUE.Equals(enableSsl))
             {
-                listener.Prefixes.Add("https://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.SSL_PORT_TEXT));
+                listener.Prefixes.Add("https://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.SSL_PORT_TEXT) + "/");
             }
             listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
         }
@@ -73,8 +73,8 @@ namespace Simple_Http_Proxy.Proxy
             HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
             webRequest.UserAgent = request.UserAgent;
             webRequest.KeepAlive = request.KeepAlive;
-            webRequest.Headers = (WebHeaderCollection)request.Headers;
             webRequest.Method = request.HttpMethod;
+            webRequest.ContentType = request.ContentType;
 
             Dictionary<string, object> proxyData = new Dictionary<string, object>();
             proxyData.Add(Constant.WEB_REQUEST, webRequest);

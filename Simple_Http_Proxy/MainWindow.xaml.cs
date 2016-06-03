@@ -1,5 +1,6 @@
 ﻿using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
+using Simple_Http_Proxy.Proxy;
 using Simple_Http_Proxy.Utils;
 using Simple_Http_Proxy.Windows;
 using System;
@@ -129,6 +130,8 @@ namespace Simple_Http_Proxy
             PreferencesUtil.loadPreferences();
             BlacklistUtil.readBlacklist();
             WhitelistUtil.readWhitelist();
+            HttpProxyListener proxyListener = HttpProxyListener.getInstance();
+            proxyListener.startListener();
         }
 
         /*
