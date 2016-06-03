@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Proxy\HttpProxyListener.cs" />
     <Compile Include="Utils\BlacklistUtil.cs" />
     <Compile Include="Utils\PreferencesUtil.cs" />
     <Compile Include="Utils\WhitelistUtil.cs" />
@@ -117,6 +118,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -1,5 +1,6 @@
 ﻿using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
+using Simple_Http_Proxy.Proxy;
 using Simple_Http_Proxy.Utils;
 using Simple_Http_Proxy.Windows;
 using System;
@@ -109,7 +110,7 @@ namespace Simple_Http_Proxy
             // Initialize Preferences tab
             hostnameTxt.Text = storage.getPreference(Constant.HOST_NAME_TEXT);
             portTxt.Text = storage.getPreference(Constant.PORT_TEXT);
-            sslChk.IsChecked = "true".Equals(storage.getPreference(Constant.SSL_CHECK));
+            sslChk.IsChecked = Constant.TRUE.Equals(storage.getPreference(Constant.SSL_CHECK));
             // fix for uncheck event not firing on app startup when IsChecked is set to false
             if (sslChk.IsChecked == false && sslPortTxt.IsEnabled)
             {
@@ -129,6 +130,8 @@ namespace Simple_Http_Proxy
             PreferencesUtil.loadPreferences();
             BlacklistUtil.readBlacklist();
             WhitelistUtil.readWhitelist();
+            HttpProxyListener proxyListener = HttpProxyListener.getInstance();
+            proxyListener.startListener();
         }
 
         /*
@@ -237,7 +240,7 @@ namespace Simple_Http_Proxy
             // set new preferences values
             storage.setPreference(Constant.HOST_NAME_TEXT, hostnameTxt.Text);
             storage.setPreference(Constant.PORT_TEXT, portTxt.Text);
-            storage.setPreference(Constant.SSL_CHECK, (bool)sslChk.IsChecked ? "true" : "false");
+            storage.setPreference(Constant.SSL_CHECK, (bool)sslChk.IsChecked ? Constant.TRUE : Constant.FALSE);
             storage.setPreference(Constant.SSL_PORT_TEXT, sslPortTxt.Text);
             storage.setPreference(Constant.BLACK_LOCATION_TEXT, blackLocationTxt.Text);
             storage.setPreference(Constant.WHITE_LOCATION_TEXT, whiteLocationTxt.Text);
