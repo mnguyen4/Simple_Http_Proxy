@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple_Http_Proxy.Proxy
@@ -13,11 +14,13 @@ namespace Simple_Http_Proxy.Proxy
     {
         private static HttpListener listener;
         private static HttpProxyListener instance;
+        private static Queue<HttpListenerContext> contextQueue;
 
         private HttpProxyListener()
         {
             // initialize the http listener
             listener = new HttpListener();
+            contextQueue = new Queue<HttpListenerContext>();
             configureHttpListener();
         }
 
@@ -68,8 +71,26 @@ namespace Simple_Http_Proxy.Proxy
         private void onRequestReceived(IAsyncResult result)
         {
             var context = listener.EndGetContext(result);
-            var request = context.Request;
+            lock (contextQueue)
+            {
+                contextQueue.Enqueue(context);
+            }
+            new Thread(sendWebRequest).Start();
+            listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
+        }
 
+        /*
+         * Function to send web request.
+         */
+        private void sendWebRequest()
+        {
+            HttpListenerContext context;
+            lock (contextQueue)
+            {
+                context = contextQueue.Dequeue();
+            }
+
+            var request = context.Request;
             HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
             webRequest.UserAgent = request.UserAgent;
             webRequest.KeepAlive = request.KeepAlive;
@@ -89,13 +110,18 @@ namespace Simple_Http_Proxy.Proxy
         {
             Dictionary<string, object> proxyData = (Dictionary<string, object>)result.AsyncState;
             HttpWebRequest webRequest = (HttpWebRequest)proxyData[Constant.WEB_REQUEST];
-            var webResponse = webRequest.EndGetResponse(result);
             HttpListenerContext originalContext = (HttpListenerContext)proxyData[Constant.ORIGINAL_CONTEXT];
             var originalResponse = originalContext.Response;
-            var webResponseStream = webResponse.GetResponseStream();
-            webResponseStream.CopyTo(originalResponse.OutputStream);
+            try
+            {
+                var webResponse = webRequest.EndGetResponse(result);
+                var webResponseStream = webResponse.GetResponseStream();
+                webResponseStream.CopyTo(originalResponse.OutputStream);
+            } catch (Exception e)
+            {
+                originalResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
             originalResponse.OutputStream.Close();
-            listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
         }
     }
 }
