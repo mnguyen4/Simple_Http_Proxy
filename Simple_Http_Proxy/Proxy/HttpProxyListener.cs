@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Simple_Http_Proxy.Proxy
 {
@@ -70,13 +69,22 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void onRequestReceived(IAsyncResult result)
         {
-            var context = listener.EndGetContext(result);
-            lock (contextQueue)
+            try
             {
-                contextQueue.Enqueue(context);
+                var context = listener.EndGetContext(result);
+                lock (contextQueue)
+                {
+                    contextQueue.Enqueue(context);
+                }
+                // start background thread to relay request
+                Thread worker = new Thread(sendWebRequest);
+                worker.IsBackground = true;
+                worker.Start();
+                listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
+            } catch (Exception e) when (e is ObjectDisposedException || e is HttpListenerException)
+            {
+                // TODO: Add logging.
             }
-            new Thread(sendWebRequest).Start();
-            listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
         }
 
         /*
@@ -96,6 +104,17 @@ namespace Simple_Http_Proxy.Proxy
             webRequest.KeepAlive = request.KeepAlive;
             webRequest.Method = request.HttpMethod;
             webRequest.ContentType = request.ContentType;
+            webRequest.CookieContainer = new CookieContainer();
+            // copy over cookies
+            foreach (Cookie cookie in request.Cookies)
+            {
+                // fix empty domain cookies
+                if (String.IsNullOrEmpty(cookie.Domain))
+                {
+                    cookie.Domain = request.Url.Host;
+                }
+                webRequest.CookieContainer.Add(cookie);
+            }
 
             Dictionary<string, object> proxyData = new Dictionary<string, object>();
             proxyData.Add(Constant.WEB_REQUEST, webRequest);
@@ -112,6 +131,7 @@ namespace Simple_Http_Proxy.Proxy
             HttpWebRequest webRequest = (HttpWebRequest)proxyData[Constant.WEB_REQUEST];
             HttpListenerContext originalContext = (HttpListenerContext)proxyData[Constant.ORIGINAL_CONTEXT];
             var originalResponse = originalContext.Response;
+            // fix for domain name resolve errors
             try
             {
                 var webResponse = webRequest.EndGetResponse(result);
@@ -119,7 +139,7 @@ namespace Simple_Http_Proxy.Proxy
                 webResponseStream.CopyTo(originalResponse.OutputStream);
             } catch (Exception e)
             {
-                originalResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
+                originalResponse.StatusCode = (int)HttpStatusCode.NotFound;
             }
             originalResponse.OutputStream.Close();
         }
