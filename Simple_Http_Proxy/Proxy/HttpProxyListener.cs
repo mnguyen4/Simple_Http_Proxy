@@ -1,4 +1,5 @@
-﻿using Simple_Http_Proxy.Constants;
+﻿using log4net;
+using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Simple_Http_Proxy.Proxy
 {
     class HttpProxyListener
     {
+        private static ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static HttpListener listener;
         private static HttpProxyListener instance;
         private static Queue<HttpListenerContext> contextQueue;
@@ -38,6 +41,8 @@ namespace Simple_Http_Proxy.Proxy
         public void startListener()
         {
             listener.Start();
+            AppStorage storage = AppStorage.getInstance();
+            LOGGER.Info("Listener started: " + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT));
             listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
         }
 
@@ -47,6 +52,7 @@ namespace Simple_Http_Proxy.Proxy
         public void stopListener()
         {
             listener.Stop();
+            LOGGER.Info("Listener stopped.");
         }
 
         /*
@@ -83,7 +89,7 @@ namespace Simple_Http_Proxy.Proxy
                 listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
             } catch (Exception e) when (e is ObjectDisposedException || e is HttpListenerException)
             {
-                // TODO: Add logging.
+                LOGGER.Error("Listener context ended.", e);
             }
         }
 
@@ -140,6 +146,7 @@ namespace Simple_Http_Proxy.Proxy
             } catch (Exception e)
             {
                 originalResponse.StatusCode = (int)HttpStatusCode.NotFound;
+                LOGGER.Error("Web request failed.", e);
             }
             originalResponse.OutputStream.Close();
         }
