@@ -1,4 +1,5 @@
-﻿using Simple_Http_Proxy.Constants;
+﻿using log4net;
+using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Simple_Http_Proxy.Utils
 {
     class WhitelistUtil
     {
+        private static ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static void readWhitelist()
         {
             AppStorage storage = AppStorage.getInstance();
@@ -39,7 +42,7 @@ namespace Simple_Http_Proxy.Utils
             }
             catch (Exception e) when (e is ObjectDisposedException || e is InvalidOperationException)
             {
-                // TODO: Add error logging.
+                LOGGER.Error("Failed to write to whitelist file.", e);
             }
             finally
             {
