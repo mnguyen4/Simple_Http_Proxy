@@ -20,8 +20,7 @@ namespace Simple_Http_Proxy.Proxy
 
         private HttpProxyListener()
         {
-            // initialize the http listener
-            listener = new HttpListener();
+            // initialize the http proxy listener
             contextQueue = new Queue<HttpListenerContext>();
             configureHttpListener();
         }
@@ -51,8 +50,18 @@ namespace Simple_Http_Proxy.Proxy
          */
         public void stopListener()
         {
-            listener.Stop();
+            listener.Close();
             LOGGER.Info("Listener stopped.");
+        }
+
+        /*
+         * Restart the HTTP listener.
+         */
+        public void restartListener()
+        {
+            stopListener();
+            configureHttpListener();
+            startListener();
         }
 
         /*
@@ -60,6 +69,7 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void configureHttpListener()
         {
+            listener = new HttpListener();
             AppStorage storage = AppStorage.getInstance();
             listener.Prefixes.Add("http://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT) + "/");
             string enableSsl = storage.getPreference(Constant.SSL_CHECK);
@@ -87,7 +97,7 @@ namespace Simple_Http_Proxy.Proxy
                 worker.IsBackground = true;
                 worker.Start();
                 listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
-            } catch (Exception e) when (e is ObjectDisposedException || e is HttpListenerException)
+            } catch (Exception e) when (!listener.IsListening)
             {
                 LOGGER.Error("Listener context ended.", e);
             }

@@ -247,6 +247,8 @@ namespace Simple_Http_Proxy
             storage.setPreferencesDirty(false);
             prefApplyBtn.IsEnabled = false;
             PreferencesUtil.writePreferences();
+            HttpProxyListener proxyListener = HttpProxyListener.getInstance();
+            proxyListener.restartListener();
         }
 
         /*
@@ -257,6 +259,8 @@ namespace Simple_Http_Proxy
             PreferencesUtil.deletePreferencesXml();
             storage.setPreferencesDirty(false);
             preferenceTabInit();
+            HttpProxyListener proxyListener = HttpProxyListener.getInstance();
+            proxyListener.restartListener();
         }
     }
 }
