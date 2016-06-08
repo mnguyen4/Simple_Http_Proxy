@@ -16,6 +16,13 @@ namespace Simple_Http_Proxy.Constants
         public const string BLACK_LOCATION_TEXT = "blackLocationTxt";
         public const string WHITE_LOCATION_TEXT = "whiteLocationTxt";
 
+        // Preferences XML constants
+        public const string ADD = "add";
+        public const string APP_SETTINGS = "appSettings";
+        public const string CONFIGURATION = "configuration";
+        public const string KEY = "key";
+        public const string VALUE = "value";
+
         // Proxy constants
         public const string WEB_REQUEST = "webRequest";
         public const string ORIGINAL_CONTEXT = "originalContext";
