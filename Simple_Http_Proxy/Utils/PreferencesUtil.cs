@@ -13,10 +13,6 @@ namespace Simple_Http_Proxy.Utils
 {
     class PreferencesUtil
     {
-        private const string SETTINGS_ELEMENT = "appSettings";
-        private const string KEY = "key";
-        private const string VALUE = "value";
-
         /*
          * Load preferences from either a custom preferences.xml or from the App.config.
          */
@@ -45,13 +41,13 @@ namespace Simple_Http_Proxy.Utils
             {
                 XmlWriter preferenceWriter = XmlWriter.Create(Constant.CONFIG_FILE_LOCATION);
                 preferenceWriter.WriteStartDocument();
-                preferenceWriter.WriteStartElement("configuration");
-                preferenceWriter.WriteStartElement("appSettings");
+                preferenceWriter.WriteStartElement(Constant.CONFIGURATION);
+                preferenceWriter.WriteStartElement(Constant.APP_SETTINGS);
                 foreach (string key in storage.getPreferences().Keys)
                 {
-                    preferenceWriter.WriteStartElement("add");
-                    preferenceWriter.WriteAttributeString("key", key);
-                    preferenceWriter.WriteAttributeString("value", storage.getPreference(key));
+                    preferenceWriter.WriteStartElement(Constant.ADD);
+                    preferenceWriter.WriteAttributeString(Constant.KEY, key);
+                    preferenceWriter.WriteAttributeString(Constant.VALUE, storage.getPreference(key));
                     preferenceWriter.WriteEndElement();
                 }
                 preferenceWriter.WriteEndElement();
@@ -73,7 +69,7 @@ namespace Simple_Http_Proxy.Utils
                 }
                 preferencesFile.Save(ConfigurationSaveMode.Modified);
                 // Force reread from disk on next access
-                ConfigurationManager.RefreshSection("appSettings");
+                ConfigurationManager.RefreshSection(Constant.APP_SETTINGS);
             }
         }
 
