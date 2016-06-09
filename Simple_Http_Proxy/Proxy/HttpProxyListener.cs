@@ -18,6 +18,8 @@ namespace Simple_Http_Proxy.Proxy
         private static HttpProxyListener instance;
         private static Queue<HttpListenerContext> contextQueue;
 
+        private static string guid;
+
         private HttpProxyListener()
         {
             // initialize the http proxy listener
@@ -40,9 +42,10 @@ namespace Simple_Http_Proxy.Proxy
         public void startListener()
         {
             listener.Start();
+            guid = Guid.NewGuid().ToString();
             AppStorage storage = AppStorage.getInstance();
             LOGGER.Info("Listener started: " + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT));
-            listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
+            listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
         }
 
         /*
@@ -85,6 +88,7 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void onRequestReceived(IAsyncResult result)
         {
+            string resultGuid = result.AsyncState.ToString();
             try
             {
                 var context = listener.EndGetContext(result);
@@ -96,10 +100,12 @@ namespace Simple_Http_Proxy.Proxy
                 Thread worker = new Thread(sendWebRequest);
                 worker.IsBackground = true;
                 worker.Start();
-                listener.BeginGetContext(new AsyncCallback(onRequestReceived), listener);
-            } catch (Exception e) when (!listener.IsListening)
+                listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
+            }
+            // catch exception thrown when old listener context is disposed
+            catch (Exception e) when (!listener.IsListening || !guid.Equals(resultGuid))
             {
-                LOGGER.Error("Listener context ended.", e);
+                LOGGER.Error("Listener context for GUID " + resultGuid + " ended.", e);
             }
         }
 
