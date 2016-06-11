@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,12 +27,16 @@ namespace Simple_Http_Proxy
     public partial class MainWindow : Window
     {
         private AppStorage storage;
+        TextChangedEventHandler textChangeHandler;
+        RoutedEventHandler checkChangeHandler;
 
         public MainWindow()
         {
             InitializeComponent();
             storage = AppStorage.getInstance();
             readPreferencesAndLists();
+            textChangeHandler = new TextChangedEventHandler(onPreferencesChanged);
+            checkChangeHandler = new RoutedEventHandler(sslChkChanged);
         }
 
         /*
@@ -42,6 +47,7 @@ namespace Simple_Http_Proxy
             blacklistTabInit();
             whitelistTabInit();
             preferenceTabInit();
+            preferenceTabEventHandlerInit();
         }
 
         /*
@@ -114,12 +120,26 @@ namespace Simple_Http_Proxy
             // fix for uncheck event not firing on app startup when IsChecked is set to false
             if (sslChk.IsChecked == false && sslPortTxt.IsEnabled)
             {
-                sslChkChanged(sslChk, new RoutedEventArgs(CheckBox.UncheckedEvent));
+                sslChkChanged(null, new RoutedEventArgs(CheckBox.UncheckedEvent));
             }
             sslPortTxt.Text = storage.getPreference(Constant.SSL_PORT_TEXT);
             blackLocationTxt.Text = storage.getPreference(Constant.BLACK_LOCATION_TEXT);
             whiteLocationTxt.Text = storage.getPreference(Constant.WHITE_LOCATION_TEXT);
             prefApplyBtn.IsEnabled = false;
+        }
+
+        /*
+         * Initialize preference tab event handlers.
+         */
+        private void preferenceTabEventHandlerInit()
+        {
+            hostnameTxt.TextChanged += textChangeHandler;
+            portTxt.TextChanged += textChangeHandler;
+            sslPortTxt.TextChanged += textChangeHandler;
+            blackLocationTxt.TextChanged += textChangeHandler;
+            whiteLocationTxt.TextChanged += textChangeHandler;
+            sslChk.Checked += checkChangeHandler;
+            sslChk.Unchecked += checkChangeHandler;
         }
 
         /*
@@ -149,7 +169,11 @@ namespace Simple_Http_Proxy
             {
                 sslPortTxt.IsEnabled = false;
             }
-            onPreferencesChanged(null, null);
+            // prevent call during initialization
+            if (sender != null)
+            {
+                onPreferencesChanged(sender, null);
+            }
         }
 
         /*
@@ -227,9 +251,43 @@ namespace Simple_Http_Proxy
          */
          private void onPreferencesChanged(object sender, TextChangedEventArgs e)
         {
+            bool isValid = false;
+            // verify text-based preferences
+            if (sender.Equals(portTxt))
+            {
+                isValid = Regex.IsMatch(portTxt.Text, @"^\d+$");
+            }
+            else if (sender.Equals(sslPortTxt))
+            {
+                isValid = Regex.IsMatch(sslPortTxt.Text, @"^\d+$");
+            }
+            else if (sender.Equals(hostnameTxt))
+            {
+                isValid = hostnameTxt.Text.Length > 0;
+            }
+            else if (sender.Equals(blackLocationTxt))
+            {
+                isValid = blackLocationTxt.Text.Length > 0;
+            }
+            else if (sender.Equals(whiteLocationTxt))
+            {
+                isValid = whiteLocationTxt.Text.Length > 0;
+            }
+            else if (sender.Equals(sslChk))
+            {
+                isValid = true;
+            }
             // preferences changed, set dirty
-            storage.setPreferencesDirty(true);
-            prefApplyBtn.IsEnabled = true;
+            if (isValid)
+            {
+                storage.setPreferencesDirty(true);
+                prefApplyBtn.IsEnabled = true;
+            }
+            else
+            {
+                storage.setPreferencesDirty(false);
+                prefApplyBtn.IsEnabled = false;
+            }
         }
 
         /*
