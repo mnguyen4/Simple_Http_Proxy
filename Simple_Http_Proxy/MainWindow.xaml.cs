@@ -126,6 +126,12 @@ namespace Simple_Http_Proxy
             blackLocationTxt.Text = storage.getPreference(Constant.BLACK_LOCATION_TEXT);
             whiteLocationTxt.Text = storage.getPreference(Constant.WHITE_LOCATION_TEXT);
             prefApplyBtn.IsEnabled = false;
+            // Initialize images
+            hostnameImg.Visibility = Visibility.Hidden;
+            portImg.Visibility = Visibility.Hidden;
+            sslPortImg.Visibility = Visibility.Hidden;
+            blackLocationImg.Visibility = Visibility.Hidden;
+            whiteLocationImg.Visibility = Visibility.Hidden;
         }
 
         /*
@@ -256,22 +262,27 @@ namespace Simple_Http_Proxy
             if (sender.Equals(portTxt))
             {
                 isValid = Regex.IsMatch(portTxt.Text, @"^\d+$");
+                portImg.Visibility = isValid ? Visibility.Hidden : Visibility.Visible;
             }
             else if (sender.Equals(sslPortTxt))
             {
                 isValid = Regex.IsMatch(sslPortTxt.Text, @"^\d+$");
+                sslPortImg.Visibility = isValid ? Visibility.Hidden : Visibility.Visible;
             }
             else if (sender.Equals(hostnameTxt))
             {
                 isValid = hostnameTxt.Text.Length > 0;
+                hostnameImg.Visibility = isValid ? Visibility.Hidden : Visibility.Visible;
             }
             else if (sender.Equals(blackLocationTxt))
             {
                 isValid = blackLocationTxt.Text.Length > 0;
+                blackLocationImg.Visibility = isValid ? Visibility.Hidden : Visibility.Visible;
             }
             else if (sender.Equals(whiteLocationTxt))
             {
                 isValid = whiteLocationTxt.Text.Length > 0;
+                whiteLocationImg.Visibility = isValid ? Visibility.Hidden : Visibility.Visible;
             }
             else if (sender.Equals(sslChk))
             {

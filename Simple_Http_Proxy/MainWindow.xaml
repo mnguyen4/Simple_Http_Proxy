@@ -48,33 +48,50 @@
             </TabItem>
             <TabItem x:Name="preferencesTab" Header="Preferences">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width=".5*"/>
-                        <ColumnDefinition Width=".5*"/>
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height=".15*"/>
-                        <RowDefinition Height=".15*"/>
-                        <RowDefinition Height=".15*"/>
-                        <RowDefinition Height=".15*"/>
-                        <RowDefinition Height=".15*"/>
-                        <RowDefinition Height=".15*"/>
+                        <RowDefinition Height=".9*"/>
                         <RowDefinition Height=".1*"/>
                     </Grid.RowDefinitions>
-                    <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Host Name/IP Address</Label>
-                    <TextBox x:Name="hostnameTxt" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
-                    <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Port</Label>
-                    <TextBox x:Name="portTxt" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
-                    <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Enable SSL</Label>
-                    <CheckBox x:Name="sslChk" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">SSL Port</Label>
-                    <TextBox x:Name="sslPortTxt" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
-                    <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Black List Location</Label>
-                    <TextBox x:Name="blackLocationTxt" Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
-                    <Label Grid.Column="0" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">White List Location</Label>
-                    <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
-                    <Button x:Name="prefApplyBtn" Grid.Column="0" Grid.Row="6" FontSize="18" Click="onPrefApplyBtnClicked">Apply</Button>
-                    <Button x:Name="prefResetBtn" Grid.Column="1" Grid.Row="6" FontSize="18" Click="onPrefResetBtnClicked">Reset Defaults</Button>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width=".35*"/>
+                            <ColumnDefinition Width=".60*"/>
+                            <ColumnDefinition Width=".05*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height=".16*"/>
+                            <RowDefinition Height=".16*"/>
+                            <RowDefinition Height=".16*"/>
+                            <RowDefinition Height=".16*"/>
+                            <RowDefinition Height=".16*"/>
+                            <RowDefinition Height=".16*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Host Name/IP Address</Label>
+                        <TextBox x:Name="hostnameTxt" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                        <Image x:Name="hostnameImg" Grid.Column="2" Grid.Row="0" Width="24" Height="24" Source="Images/invalid.png"/>
+                        <Label Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Port</Label>
+                        <TextBox x:Name="portTxt" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                        <Image x:Name="portImg" Grid.Column="2" Grid.Row="1" Width="24" Height="24" Source="Images/invalid.png"/>
+                        <Label Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Enable SSL</Label>
+                        <CheckBox x:Name="sslChk" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Label Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">SSL Port</Label>
+                        <TextBox x:Name="sslPortTxt" Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                        <Image x:Name="sslPortImg" Grid.Column="2" Grid.Row="3" Width="24" Height="24" Source="Images/invalid.png"/>
+                        <Label Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">Black List Location</Label>
+                        <TextBox x:Name="blackLocationTxt" Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                        <Image x:Name="blackLocationImg" Grid.Column="2" Grid.Row="4" Width="24" Height="24" Source="Images/invalid.png"/>
+                        <Label Grid.Column="0" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18">White List Location</Label>
+                        <TextBox x:Name="whiteLocationTxt" Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" />
+                        <Image x:Name="whiteLocationImg" Grid.Column="2" Grid.Row="5" Width="24" Height="24" Source="Images/invalid.png"/>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width=".5*"/>
+                            <ColumnDefinition Width=".5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="prefApplyBtn" Grid.Column="0" FontSize="18" Click="onPrefApplyBtnClicked">Apply</Button>
+                        <Button x:Name="prefResetBtn" Grid.Column="1" FontSize="18" Click="onPrefResetBtnClicked">Reset Defaults</Button>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
