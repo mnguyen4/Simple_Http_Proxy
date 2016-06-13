@@ -69,6 +69,7 @@
     <Compile Include="Proxy\HttpProxyListener.cs" />
     <Compile Include="Utils\BlacklistUtil.cs" />
     <Compile Include="Utils\PreferencesUtil.cs" />
+    <Compile Include="Utils\UrlUtil.cs" />
     <Compile Include="Utils\WhitelistUtil.cs" />
     <Compile Include="Windows\AddListItem.xaml.cs">
       <DependentUpon>AddListItem.xaml</DependentUpon>

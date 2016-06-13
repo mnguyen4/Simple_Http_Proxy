@@ -47,6 +47,7 @@ namespace Simple_Http_Proxy.Windows
         private void onListItemConfirmBtnClicked(object sender, RoutedEventArgs e)
         {
             string listItem = listDomainTxt.Text;
+            listItem = UrlUtil.parseDomainName(listItem);
             if (listItem != null && listItem.Length > 0 && !oldItem.Equals(listItem))
             {
                 AppStorage storage = AppStorage.getInstance();
