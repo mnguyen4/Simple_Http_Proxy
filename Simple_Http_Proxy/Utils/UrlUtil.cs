@@ -19,17 +19,22 @@ namespace Simple_Http_Proxy.Utils
             {
                 return url;
             }
-            // add protocol if the url doesn't contain it
-            if (!url.Contains("http://"))
+            // remove protocol string if exists
+            Regex protocolPattern = new Regex("http://|https://");
+            if (protocolPattern.IsMatch(url))
             {
-                url = "http://" + url;
+                url = protocolPattern.Replace(url, "");
             }
-            Uri uri = new Uri(url);
-            string host = uri.Host;
-            string[] hostParts = host.Split('.');
+            // remove parameter string if exists
+            Regex queryPattern = new Regex("/.+|\\?.+");
+            if (queryPattern.IsMatch(url))
+            {
+                url = queryPattern.Replace(url, "");
+            }
+            string[] hostParts = url.Split('.');
             int length = hostParts.Length;
-            host = length > 2 ? hostParts[length - 2] + '.' + hostParts[length - 1] : host;
-            return host;
+            url = length > 2 ? hostParts[length - 2] + '.' + hostParts[length - 1] : url;
+            return url;
         }
     }
 }
