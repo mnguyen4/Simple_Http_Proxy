@@ -24,8 +24,8 @@
                 <ColumnDefinition Width=".5*" />
                 <ColumnDefinition Width=".5*" />
             </Grid.ColumnDefinitions>
-            <Button x:Name="listItemConfirmBtn" Grid.Column="0" Grid.Row="1" FontSize="14" Click="onListItemConfirmBtnClicked">Confirm</Button>
-            <Button x:Name="listItemCancelBtn" Grid.Column="1" Grid.Row="1" FontSize="14" Click="onListItemCancelBtnClicked">Cancel</Button>
+            <Button x:Name="listItemConfirmBtn" Grid.Column="0" Grid.Row="1" FontSize="14">Confirm</Button>
+            <Button x:Name="listItemCancelBtn" Grid.Column="1" Grid.Row="1" FontSize="14">Cancel</Button>
         </Grid>
     </Grid>
 </Window>

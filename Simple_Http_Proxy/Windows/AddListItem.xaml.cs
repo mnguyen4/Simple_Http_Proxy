@@ -29,6 +29,17 @@ namespace Simple_Http_Proxy.Windows
         {
             InitializeComponent();
             this.panelOp = panelOp;
+            initializeListeners();
+        }
+
+        /*
+         * Initialize listeners for UI components.
+         */
+        private void initializeListeners()
+        {
+            listDomainTxt.KeyDown += new KeyEventHandler(onListDomainTxtKeyPressed);
+            listItemAddBtn.Click += new RoutedEventHandler(onListItemAddBtnClicked);
+            listItemCancelBtn.Click += new RoutedEventHandler(onListItemCancelBtnClicked);
         }
 
         /*
@@ -61,6 +72,18 @@ namespace Simple_Http_Proxy.Windows
         private void onListItemCancelBtnClicked(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        /*
+         * Key press event handler for list domain textbox.
+         */
+        private void onListDomainTxtKeyPressed(object sender, KeyEventArgs e)
+        {
+            // if key pressed is enter, trigger add button click
+            if (e.Key.Equals(Key.Enter))
+            {
+                onListItemAddBtnClicked(listItemAddBtn, new RoutedEventArgs(Button.ClickEvent));
+            }
         }
     }
 }
