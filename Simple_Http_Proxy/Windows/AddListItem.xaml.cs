@@ -37,6 +37,7 @@ namespace Simple_Http_Proxy.Windows
         private void onListItemAddBtnClicked(object sender, RoutedEventArgs e)
         {
             string listItem = listDomainTxt.Text;
+            listItem = UrlUtil.parseDomainName(listItem);
             if (listItem != null && listItem.Length > 0)
             {
                 AppStorage storage = AppStorage.getInstance();
