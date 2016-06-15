@@ -14,8 +14,8 @@ namespace Simple_Http_Proxy.Utils
          */
         public static string parseDomainName(string url)
         {
-            // url is already in domain name format
-            if (Regex.IsMatch(url, @"^([A-Za-z0-9]+\.[A-Za-z0-9]+)$"))
+            // url is already in domain name format or in IP format
+            if (Regex.IsMatch(url, @"^([A-Za-z0-9]+\.[A-Za-z0-9]+)$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$"))
             {
                 return url;
             }
