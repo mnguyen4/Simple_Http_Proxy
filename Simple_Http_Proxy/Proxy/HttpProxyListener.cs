@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Simple_Http_Proxy.Constants;
 using Simple_Http_Proxy.Memory;
+using Simple_Http_Proxy.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,27 +122,38 @@ namespace Simple_Http_Proxy.Proxy
             }
 
             var request = context.Request;
-            HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
-            webRequest.UserAgent = request.UserAgent;
-            webRequest.KeepAlive = request.KeepAlive;
-            webRequest.Method = request.HttpMethod;
-            webRequest.ContentType = request.ContentType;
-            webRequest.CookieContainer = new CookieContainer();
-            // copy over cookies
-            foreach (Cookie cookie in request.Cookies)
+            // url is in blacklist
+            if (BlacklistUtil.isBlacklistedDomain(request.RawUrl))
             {
-                // fix empty domain cookies
-                if (String.IsNullOrEmpty(cookie.Domain))
-                {
-                    cookie.Domain = request.Url.Host;
-                }
-                webRequest.CookieContainer.Add(cookie);
+                var response = context.Response;
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+                response.OutputStream.Close();
             }
+            // url is not in blacklist
+            else
+            {
+                HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
+                webRequest.UserAgent = request.UserAgent;
+                webRequest.KeepAlive = request.KeepAlive;
+                webRequest.Method = request.HttpMethod;
+                webRequest.ContentType = request.ContentType;
+                webRequest.CookieContainer = new CookieContainer();
+                // copy over cookies
+                foreach (Cookie cookie in request.Cookies)
+                {
+                    // fix empty domain cookies
+                    if (String.IsNullOrEmpty(cookie.Domain))
+                    {
+                        cookie.Domain = request.Url.Host;
+                    }
+                    webRequest.CookieContainer.Add(cookie);
+                }
 
-            Dictionary<string, object> proxyData = new Dictionary<string, object>();
-            proxyData.Add(Constant.WEB_REQUEST, webRequest);
-            proxyData.Add(Constant.ORIGINAL_CONTEXT, context);
-            webRequest.BeginGetResponse(new AsyncCallback(onWebResponseReceived), proxyData);
+                Dictionary<string, object> proxyData = new Dictionary<string, object>();
+                proxyData.Add(Constant.WEB_REQUEST, webRequest);
+                proxyData.Add(Constant.ORIGINAL_CONTEXT, context);
+                webRequest.BeginGetResponse(new AsyncCallback(onWebResponseReceived), proxyData);
+            }
         }
 
         /*
