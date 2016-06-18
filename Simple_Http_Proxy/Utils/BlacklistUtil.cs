@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,6 +49,15 @@ namespace Simple_Http_Proxy.Utils
             {
                 blacklistFile.Close();
             }
+        }
+
+        public static bool isBlacklistedDomain(string requestUrl)
+        {
+            bool isBlacklisted = false;
+            requestUrl = UrlUtil.parseDomainName(requestUrl);
+            AppStorage storage = AppStorage.getInstance();
+            isBlacklisted = storage.isBlacklistItem(requestUrl);
+            return isBlacklisted;
         }
     }
 }

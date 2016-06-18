@@ -26,7 +26,7 @@ namespace Simple_Http_Proxy.Utils
                 url = protocolPattern.Replace(url, "");
             }
             // remove parameter string if exists
-            Regex queryPattern = new Regex("/.+|\\?.+");
+            Regex queryPattern = new Regex("/.*|\\?.*");
             if (queryPattern.IsMatch(url))
             {
                 url = queryPattern.Replace(url, "");
