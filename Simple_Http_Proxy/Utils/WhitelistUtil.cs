@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,6 +49,20 @@ namespace Simple_Http_Proxy.Utils
             {
                 whitelistFile.Close();
             }
+        }
+
+        public static bool isWhitelistedDomain(HttpListenerRequest request)
+        {
+            bool isWhitelisted = false;
+            string requestUrl = UrlUtil.parseDomainName(request.RawUrl);
+            AppStorage storage = AppStorage.getInstance();
+            isWhitelisted = storage.isWhitelistItem(requestUrl);
+            if (!isWhitelisted)
+            {
+                requestUrl = UrlUtil.parseDomainName(request.UrlReferrer.OriginalString);
+                isWhitelisted = storage.isWhitelistItem(requestUrl);
+            }
+            return isWhitelisted;
         }
     }
 }
