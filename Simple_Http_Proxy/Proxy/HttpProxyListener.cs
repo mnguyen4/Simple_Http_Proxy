@@ -123,7 +123,7 @@ namespace Simple_Http_Proxy.Proxy
 
             var request = context.Request;
             // url is in blacklist
-            if (BlacklistUtil.isBlacklistedDomain(request.RawUrl))
+            if (BlacklistUtil.isBlacklistedDomain(request.RawUrl) && !WhitelistUtil.isWhitelistedDomain(request))
             {
                 var response = context.Response;
                 response.StatusCode = (int)HttpStatusCode.NotFound;
