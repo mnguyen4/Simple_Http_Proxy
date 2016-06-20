@@ -27,6 +27,9 @@ namespace Simple_Http_Proxy.Constants
         public const string WEB_REQUEST = "webRequest";
         public const string ORIGINAL_CONTEXT = "originalContext";
 
+        // Context menu constants
+        public const string CLOSE = "Close";
+
         // Common constants
         public const string BLACKLIST_OP = "blacklist";
         public const string WHITELIST_OP = "whitelist";
@@ -35,5 +38,6 @@ namespace Simple_Http_Proxy.Constants
 
         // Misc constants
         public const string CONFIG_FILE_LOCATION = "cfg\\preferences.xml";
+        public const string MAIN_ICON_LOCATION = "Images\\main.ico";
     }
 }
