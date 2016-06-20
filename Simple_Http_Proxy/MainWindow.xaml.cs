@@ -331,5 +331,16 @@ namespace Simple_Http_Proxy
             HttpProxyListener proxyListener = HttpProxyListener.getInstance();
             proxyListener.restartListener();
         }
+
+        /*
+         * Evernt handler for window state changed.
+         */
+        private void onWindowStateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState.Equals(WindowState.Minimized))
+            {
+                this.Hide();
+            }
+        }
     }
 }

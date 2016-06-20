@@ -21,6 +21,14 @@ namespace Simple_Http_Proxy
             notifyIcon = new System.Windows.Forms.NotifyIcon();
             notifyIcon.Icon = new System.Drawing.Icon("Images\\main.ico");
             notifyIcon.Visible = true;
+            notifyIcon.Click += new EventHandler(onNotifyIconClicked);
+        }
+
+        private void onNotifyIconClicked(object sender, EventArgs e)
+        {
+            var mainWindow = App.Current.MainWindow;
+            mainWindow.Show();
+            mainWindow.WindowState = WindowState.Normal;
         }
 
         private void onApplicationExit(object sender, ExitEventArgs e)
