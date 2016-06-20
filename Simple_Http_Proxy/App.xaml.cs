@@ -1,4 +1,5 @@
-﻿using Simple_Http_Proxy.Proxy;
+﻿using Simple_Http_Proxy.Constants;
+using Simple_Http_Proxy.Proxy;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,9 +20,16 @@ namespace Simple_Http_Proxy
         private void onApplicationStartup(object sender, StartupEventArgs e)
         {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.Icon = new System.Drawing.Icon("Images\\main.ico");
+            notifyIcon.Icon = new System.Drawing.Icon(Constant.MAIN_ICON_LOCATION);
             notifyIcon.Visible = true;
             notifyIcon.Click += new EventHandler(onNotifyIconClicked);
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            var menuItem = new System.Windows.Forms.MenuItem();
+            menuItem.Text = Constant.CLOSE;
+            menuItem.Index = 0;
+            menuItem.Click += new EventHandler(onContextMenuItemClicked);
+            contextMenu.MenuItems.Add(menuItem);
+            notifyIcon.ContextMenu = contextMenu;
         }
 
         private void onNotifyIconClicked(object sender, EventArgs e)
@@ -29,6 +37,12 @@ namespace Simple_Http_Proxy
             var mainWindow = App.Current.MainWindow;
             mainWindow.Show();
             mainWindow.WindowState = WindowState.Normal;
+        }
+
+        private void onContextMenuItemClicked(object sender, EventArgs e)
+        {
+            var mainWindow = App.Current.MainWindow;
+            mainWindow.Close();
         }
 
         private void onApplicationExit(object sender, ExitEventArgs e)
