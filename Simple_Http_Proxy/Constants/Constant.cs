@@ -35,6 +35,7 @@ namespace Simple_Http_Proxy.Constants
         public const string WHITELIST_OP = "whitelist";
         public const string TRUE = "true";
         public const string FALSE = "false";
+        public const string POST = "POST";
 
         // Misc constants
         public const string CONFIG_FILE_LOCATION = "cfg\\preferences.xml";

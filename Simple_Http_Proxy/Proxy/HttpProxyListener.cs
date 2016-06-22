@@ -134,7 +134,6 @@ namespace Simple_Http_Proxy.Proxy
             {
                 HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
                 webRequest.UserAgent = request.UserAgent;
-                webRequest.KeepAlive = request.KeepAlive;
                 webRequest.Method = request.HttpMethod;
                 webRequest.ContentType = request.ContentType;
                 webRequest.CookieContainer = new CookieContainer();
@@ -147,6 +146,12 @@ namespace Simple_Http_Proxy.Proxy
                         cookie.Domain = request.Url.Host;
                     }
                     webRequest.CookieContainer.Add(cookie);
+                }
+                // copy over POST body
+                if (request.HttpMethod.Equals(Constant.POST))
+                {
+                    request.InputStream.CopyTo(webRequest.GetRequestStream());
+                    request.InputStream.Close();
                 }
 
                 Dictionary<string, object> proxyData = new Dictionary<string, object>();
@@ -169,6 +174,17 @@ namespace Simple_Http_Proxy.Proxy
             try
             {
                 var webResponse = webRequest.EndGetResponse(result);
+                originalResponse.ContentType = webResponse.ContentType;
+                originalResponse.ContentLength64 = webResponse.ContentLength;
+                // copy over headers
+                foreach(string key in webResponse.Headers.AllKeys)
+                {
+                    // omit existing heaers and reserved headers
+                    if (!originalResponse.Headers.AllKeys.Contains<string>(key) && !HeaderUtil.isReservedHeader(key))
+                    {
+                        originalResponse.Headers[key] = webResponse.Headers[key];
+                    }
+                }
                 var webResponseStream = webResponse.GetResponseStream();
                 webResponseStream.CopyTo(originalResponse.OutputStream);
             } catch (Exception e)
