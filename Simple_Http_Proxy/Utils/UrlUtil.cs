@@ -15,7 +15,7 @@ namespace Simple_Http_Proxy.Utils
         public static string parseDomainName(string url)
         {
             // url is already in domain name format or in IP format
-            if (Regex.IsMatch(url, @"^([A-Za-z0-9]+\.[A-Za-z0-9]+)$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$"))
+            if (Regex.IsMatch(url, @"^(([A-Za-z0-9]+\.){2}[A-Za-z0-9]+)$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$"))
             {
                 return url;
             }
@@ -33,7 +33,7 @@ namespace Simple_Http_Proxy.Utils
             }
             string[] hostParts = url.Split('.');
             int length = hostParts.Length;
-            url = length > 2 ? hostParts[length - 2] + '.' + hostParts[length - 1] : url;
+            url = length > 3 ? hostParts[length - 3] + '.' + hostParts[length - 2] + '.' + hostParts[length - 1] : url;
             return url;
         }
     }
