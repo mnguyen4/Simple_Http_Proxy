@@ -13,7 +13,7 @@ namespace Simple_Http_Proxy.Utils
 {
     class BlacklistUtil
     {
-        public static ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static ILog LOGGER = LogManager.GetLogger(typeof (BlacklistUtil));
 
         public static void readBlacklist()
         {

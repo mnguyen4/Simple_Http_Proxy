@@ -13,7 +13,7 @@ namespace Simple_Http_Proxy.Proxy
 {
     class HttpProxyListener
     {
-        private static ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog LOGGER = LogManager.GetLogger(typeof (HttpProxyListener));
 
         private static HttpListener listener;
         private static HttpProxyListener instance;
@@ -45,7 +45,12 @@ namespace Simple_Http_Proxy.Proxy
             listener.Start();
             guid = Guid.NewGuid().ToString();
             AppStorage storage = AppStorage.getInstance();
-            LOGGER.Info("Listener started: " + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT));
+            foreach (var prefix in listener.Prefixes)
+            {
+                LOGGER.Info("Listener started on: " + prefix);
+            }
+            string appGuid = System.Reflection.Assembly.GetExecutingAssembly().GetType().GUID.ToString();
+            LOGGER.Info("Application GUID: " + appGuid);
             listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
         }
 
