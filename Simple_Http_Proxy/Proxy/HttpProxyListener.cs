@@ -180,7 +180,6 @@ namespace Simple_Http_Proxy.Proxy
             {
                 var webResponse = webRequest.EndGetResponse(result);
                 originalResponse.ContentType = webResponse.ContentType;
-                originalResponse.ContentLength64 = webResponse.ContentLength;
                 // copy over headers
                 foreach(string key in webResponse.Headers.AllKeys)
                 {
