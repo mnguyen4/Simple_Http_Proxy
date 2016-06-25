@@ -26,6 +26,7 @@ namespace Simple_Http_Proxy.Utils
                 case "Content-Type":
                 case "Referrer":
                 case "User-Agent":
+                case "Keep-Alive":
                     isReserved = true;
                     break;
                 default:
