@@ -13,7 +13,7 @@ namespace Simple_Http_Proxy.Utils
 {
     class WhitelistUtil
     {
-        private static ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog LOGGER = LogManager.GetLogger(typeof (WhitelistUtil));
 
         public static void readWhitelist()
         {
