@@ -4,8 +4,10 @@ using Simple_Http_Proxy.Memory;
 using Simple_Http_Proxy.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -15,16 +17,22 @@ namespace Simple_Http_Proxy.Proxy
     {
         private static ILog LOGGER = LogManager.GetLogger(typeof (HttpProxyListener));
 
-        private static HttpListener listener;
+        //private static HttpListener listener;
+        private static TcpListener tcpListener;
         private static HttpProxyListener instance;
         private static Queue<HttpListenerContext> contextQueue;
+        private static ManualResetEvent listeningEvent;
+        private static Thread tcpListenerThread;
 
         private static string guid;
+        private static bool isListening;
 
         private HttpProxyListener()
         {
             // initialize the http proxy listener
             contextQueue = new Queue<HttpListenerContext>();
+            listeningEvent = new ManualResetEvent(false);
+            isListening = false;
             configureHttpListener();
         }
 
@@ -42,6 +50,7 @@ namespace Simple_Http_Proxy.Proxy
          */
         public void startListener()
         {
+            /*
             listener.Start();
             guid = Guid.NewGuid().ToString();
             AppStorage storage = AppStorage.getInstance();
@@ -52,6 +61,19 @@ namespace Simple_Http_Proxy.Proxy
             string appGuid = System.Reflection.Assembly.GetExecutingAssembly().GetType().GUID.ToString();
             LOGGER.Info("Application GUID: " + appGuid);
             listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
+            */
+            tcpListener.Start();
+            isListening = true;
+            tcpListenerThread = new Thread(() =>
+            {
+                while (isListening)
+                {
+                    listeningEvent.Reset();
+                    tcpListener.BeginAcceptTcpClient(new AsyncCallback(onRequestReceived), tcpListener);
+                    listeningEvent.WaitOne();
+                }
+            });
+            tcpListenerThread.Start();
         }
 
         /*
@@ -59,8 +81,13 @@ namespace Simple_Http_Proxy.Proxy
          */
         public void stopListener()
         {
+            isListening = false;
+            listeningEvent.Set();
+            tcpListener.Stop();
+            /*
             listener.Close();
             LOGGER.Info("Listener stopped.");
+            */
         }
 
         /*
@@ -78,6 +105,7 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void configureHttpListener()
         {
+            /*
             listener = new HttpListener();
             AppStorage storage = AppStorage.getInstance();
             listener.Prefixes.Add("http://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT) + "/");
@@ -87,6 +115,9 @@ namespace Simple_Http_Proxy.Proxy
                 listener.Prefixes.Add("https://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.SSL_PORT_TEXT) + "/");
             }
             listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+            */
+            AppStorage storage = AppStorage.getInstance();
+            tcpListener = new TcpListener(IPAddress.Parse(storage.getPreference(Constant.HOST_NAME_TEXT)), Int32.Parse(storage.getPreference(Constant.PORT_TEXT)));
         }
 
         /*
@@ -94,6 +125,7 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void onRequestReceived(IAsyncResult result)
         {
+            /*
             string resultGuid = result.AsyncState.ToString();
             try
             {
@@ -113,13 +145,32 @@ namespace Simple_Http_Proxy.Proxy
             {
                 LOGGER.Error("Listener context for GUID " + resultGuid + " ended.", e);
             }
+            */
+            var listener = (TcpListener)result.AsyncState;
+            TcpClient tcpClient = null;
+            try
+            {
+                tcpClient = listener.EndAcceptTcpClient(result);
+                // start background thread to relay request
+                Thread worker = new Thread(() => sendWebRequest(tcpClient));
+                worker.IsBackground = true;
+                worker.Start();
+            } catch (Exception e)
+            {
+                LOGGER.Error("Failed to receive request.", e);
+            } finally
+            {
+                // signal the listener to start listening again
+                listeningEvent.Set();
+            }
         }
 
         /*
          * Function to send web request.
          */
-        private void sendWebRequest()
+        private void sendWebRequest(TcpClient tcpClient)
         {
+            /*
             HttpListenerContext context;
             lock (contextQueue)
             {
@@ -163,6 +214,13 @@ namespace Simple_Http_Proxy.Proxy
                 proxyData.Add(Constant.WEB_REQUEST, webRequest);
                 proxyData.Add(Constant.ORIGINAL_CONTEXT, context);
                 webRequest.BeginGetResponse(new AsyncCallback(onWebResponseReceived), proxyData);
+            }
+            */
+            try
+            {
+                NetworkStream clientStream = tcpClient.GetStream();
+                StreamReader clientReader = new StreamReader(clientStream);
+                StreamWriter clientWriter = new StreamWriter(clientStream);
             }
         }
 
