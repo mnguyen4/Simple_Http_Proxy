@@ -218,9 +218,27 @@ namespace Simple_Http_Proxy.Proxy
             */
             try
             {
+                // get the connecting client IO stream
                 NetworkStream clientStream = tcpClient.GetStream();
                 StreamReader clientReader = new StreamReader(clientStream);
                 StreamWriter clientWriter = new StreamWriter(clientStream);
+
+                // get the request method
+                string method = clientReader.ReadLine();
+                if (method == null || method.Length == 0)
+                {
+                    return;
+                }
+                
+            } catch (Exception e)
+            {
+                LOGGER.Error("Failed to relay request.", e);
+            } finally
+            {
+                if (tcpClient != null && tcpClient.Connected)
+                {
+                    tcpClient.Close();
+                }
             }
         }
 
@@ -255,6 +273,38 @@ namespace Simple_Http_Proxy.Proxy
                 LOGGER.Error("Web request failed.", e);
             }
             originalResponse.OutputStream.Close();
+        }
+
+        /*
+         * Relay traffic from one TcpClient to another.
+         */
+        private void relayTcpTraffic(TcpClient from, TcpClient to)
+        {
+            // get the network streams
+            NetworkStream fromStream = from.GetStream();
+            NetworkStream toStream = to.GetStream();
+            try
+            {
+                // copy data
+                if (from.Connected && to.Connected)
+                {
+                    fromStream.CopyTo(toStream);
+                }
+            } catch(Exception e)
+            {
+                LOGGER.Error("Failed to relay request.", e);
+            } finally
+            {
+                // clean up connections
+                if (from.Connected)
+                {
+                    from.Close();
+                }
+                if (to.Connected)
+                {
+                    to.Close();
+                }
+            }
         }
     }
 }
