@@ -36,5 +36,14 @@ namespace Simple_Http_Proxy.Utils
             url = length > 3 ? hostParts[length - 3] + '.' + hostParts[length - 2] + '.' + hostParts[length - 1] : url;
             return url;
         }
+
+        /*
+         * Check if URL is in the format domainname:port.
+         */
+         public static bool isDomainAndPort(string url)
+        {
+            Regex domainAndPortPattern = new Regex("^(.+:[0-9]+)$");
+            return domainAndPortPattern.IsMatch(url);
+        }
     }
 }

@@ -216,6 +216,7 @@ namespace Simple_Http_Proxy.Proxy
                 webRequest.BeginGetResponse(new AsyncCallback(onWebResponseReceived), proxyData);
             }
             */
+            TcpClient tcpEndpoint = null;
             try
             {
                 // get the connecting client IO stream
@@ -224,12 +225,37 @@ namespace Simple_Http_Proxy.Proxy
                 StreamWriter clientWriter = new StreamWriter(clientStream);
 
                 // get the request method
+                // Ex: GET http://imgur.com/ HTTP/1.1
                 string method = clientReader.ReadLine();
                 if (method == null || method.Length == 0)
                 {
                     return;
                 }
-                
+                string[] methodParts = method.Split(' ');
+                string url = methodParts[1];
+                if (url.StartsWith("http://"))
+                {
+                    url = url.Replace("http://", "");
+                    url = url.Replace("/", "");
+                    tcpEndpoint = new TcpClient(url, 80);
+                }
+                else if (url.StartsWith("https://"))
+                {
+                    url = url.Replace("https://", "");
+                    url = url.Replace("/", "");
+                    tcpEndpoint = new TcpClient(url, 443);
+                }
+                else if (UrlUtil.isDomainAndPort(url))
+                {
+                    string[] urlParts = methodParts[1].Split(':');
+                    tcpEndpoint = new TcpClient(urlParts[0], Int32.Parse(urlParts[1]));
+                }
+                else
+                {
+                    return;
+                }
+                relayTcpTraffic(tcpClient, tcpEndpoint);
+                relayTcpTraffic(tcpEndpoint, tcpClient);
             } catch (Exception e)
             {
                 LOGGER.Error("Failed to relay request.", e);
@@ -238,6 +264,10 @@ namespace Simple_Http_Proxy.Proxy
                 if (tcpClient != null && tcpClient.Connected)
                 {
                     tcpClient.Close();
+                }
+                if (tcpEndpoint != null && tcpEndpoint.Connected)
+                {
+                    tcpEndpoint.Close();
                 }
             }
         }
