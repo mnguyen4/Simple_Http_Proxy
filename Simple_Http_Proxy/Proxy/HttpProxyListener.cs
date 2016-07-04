@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Simple_Http_Proxy.Proxy
@@ -24,7 +25,6 @@ namespace Simple_Http_Proxy.Proxy
         private static ManualResetEvent listeningEvent;
         private static Thread tcpListenerThread;
 
-        private static string guid;
         private static bool isListening;
 
         private HttpProxyListener()
@@ -50,30 +50,21 @@ namespace Simple_Http_Proxy.Proxy
          */
         public void startListener()
         {
-            /*
-            listener.Start();
-            guid = Guid.NewGuid().ToString();
-            AppStorage storage = AppStorage.getInstance();
-            foreach (var prefix in listener.Prefixes)
-            {
-                LOGGER.Info("Listener started on: " + prefix);
-            }
-            string appGuid = System.Reflection.Assembly.GetExecutingAssembly().GetType().GUID.ToString();
-            LOGGER.Info("Application GUID: " + appGuid);
-            listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
-            */
             tcpListener.Start();
             isListening = true;
+            // handle network events on a separate thread
             tcpListenerThread = new Thread(() =>
             {
                 while (isListening)
                 {
                     listeningEvent.Reset();
                     tcpListener.BeginAcceptTcpClient(new AsyncCallback(onRequestReceived), tcpListener);
+                    // wait for signal to continue with loop
                     listeningEvent.WaitOne();
                 }
             });
             tcpListenerThread.Start();
+            LOGGER.Info("Listener started.");
         }
 
         /*
@@ -84,10 +75,7 @@ namespace Simple_Http_Proxy.Proxy
             isListening = false;
             listeningEvent.Set();
             tcpListener.Stop();
-            /*
-            listener.Close();
             LOGGER.Info("Listener stopped.");
-            */
         }
 
         /*
@@ -105,17 +93,6 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void configureHttpListener()
         {
-            /*
-            listener = new HttpListener();
-            AppStorage storage = AppStorage.getInstance();
-            listener.Prefixes.Add("http://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.PORT_TEXT) + "/");
-            string enableSsl = storage.getPreference(Constant.SSL_CHECK);
-            if (Constant.TRUE.Equals(enableSsl))
-            {
-                listener.Prefixes.Add("https://" + storage.getPreference(Constant.HOST_NAME_TEXT) + ":" + storage.getPreference(Constant.SSL_PORT_TEXT) + "/");
-            }
-            listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-            */
             AppStorage storage = AppStorage.getInstance();
             tcpListener = new TcpListener(IPAddress.Parse(storage.getPreference(Constant.HOST_NAME_TEXT)), Int32.Parse(storage.getPreference(Constant.PORT_TEXT)));
         }
@@ -125,216 +102,132 @@ namespace Simple_Http_Proxy.Proxy
          */
         private void onRequestReceived(IAsyncResult result)
         {
-            /*
-            string resultGuid = result.AsyncState.ToString();
-            try
-            {
-                var context = listener.EndGetContext(result);
-                lock (contextQueue)
-                {
-                    contextQueue.Enqueue(context);
-                }
-                // start background thread to relay request
-                Thread worker = new Thread(sendWebRequest);
-                worker.IsBackground = true;
-                worker.Start();
-                listener.BeginGetContext(new AsyncCallback(onRequestReceived), guid);
-            }
-            // catch exception thrown when old listener context is disposed
-            catch (Exception e) when (!listener.IsListening || !guid.Equals(resultGuid))
-            {
-                LOGGER.Error("Listener context for GUID " + resultGuid + " ended.", e);
-            }
-            */
             var listener = (TcpListener)result.AsyncState;
+            // signal the listener to start listening again
+            listeningEvent.Set();
             TcpClient tcpClient = null;
             try
             {
                 tcpClient = listener.EndAcceptTcpClient(result);
-                // start background thread to relay request
-                Thread worker = new Thread(() => sendWebRequest(tcpClient));
-                worker.IsBackground = true;
-                worker.Start();
+                // use a session storage to keep track of traffic
+                ProxyStorage pStorage = new ProxyStorage();
+                pStorage.buffer = new byte[2048];
+                pStorage.tcpClient = tcpClient;
+
+                // get the connecting client IO stream
+                NetworkStream clientStream = tcpClient.GetStream();
+                clientStream.BeginRead(pStorage.buffer, 0, pStorage.buffer.Length, new AsyncCallback(clientDataReceived), pStorage);
             } catch (Exception e)
             {
                 LOGGER.Error("Failed to receive request.", e);
-            } finally
-            {
-                // signal the listener to start listening again
-                listeningEvent.Set();
             }
         }
 
         /*
-         * Function to send web request.
+         * Asynchronous function to read data from client.
          */
-        private void sendWebRequest(TcpClient tcpClient)
+        private void clientDataReceived(IAsyncResult result)
         {
-            /*
-            HttpListenerContext context;
-            lock (contextQueue)
+            // get the request method
+            // Ex: GET http://imgur.com/ HTTP/1.1
+            var pStorage = (ProxyStorage)result.AsyncState;
+            var clientStream = pStorage.tcpClient.GetStream();
+            string data = "";
+            byte[] dataBytes;
+
+            // get data from asynchronous read
+            pStorage.read = clientStream.EndRead(result);
+            data += Encoding.ASCII.GetString(pStorage.buffer, 0, pStorage.read);
+            // try to get the remaining data (if any)
+            while (clientStream.DataAvailable)
             {
-                context = contextQueue.Dequeue();
+                pStorage.read = clientStream.Read(pStorage.buffer, 0, pStorage.buffer.Length);
+                data += Encoding.ASCII.GetString(pStorage.buffer, 0, pStorage.read);
             }
 
-            var request = context.Request;
-            // url is in blacklist
-            if (BlacklistUtil.isBlacklistedDomain(request.RawUrl) && !WhitelistUtil.isWhitelistedDomain(request))
+            // parse the host name and try to create the TCP end point
+            string method = data.Replace("\r\n", "\n").Split(new string[] { "\n" }, StringSplitOptions.None)[0];
+            string[] methodParts = method.Split(' ');
+            pStorage.tcpEndPoint = generateTcpEndPoint(methodParts);
+            // no hostname specified
+            if (pStorage.tcpEndPoint == null)
             {
-                var response = context.Response;
-                response.StatusCode = (int)HttpStatusCode.NotFound;
-                response.OutputStream.Close();
+                dataBytes = Encoding.ASCII.GetBytes("HTTP/1.1 404 Not Found\r\n\r\n");
+                clientStream.Write(dataBytes, 0, dataBytes.Length);
+                pStorage.tcpClient.Close();
+                return;
             }
-            // url is not in blacklist
-            else
-            {
-                HttpWebRequest webRequest = HttpWebRequest.CreateHttp(request.RawUrl);
-                webRequest.UserAgent = request.UserAgent;
-                webRequest.Method = request.HttpMethod;
-                webRequest.ContentType = request.ContentType;
-                webRequest.CookieContainer = new CookieContainer();
-                // copy over cookies
-                foreach (Cookie cookie in request.Cookies)
-                {
-                    // fix empty domain cookies
-                    if (String.IsNullOrEmpty(cookie.Domain))
-                    {
-                        cookie.Domain = request.Url.Host;
-                    }
-                    webRequest.CookieContainer.Add(cookie);
-                }
-                // copy over POST body
-                if (request.HttpMethod.Equals(Constant.POST))
-                {
-                    request.InputStream.CopyTo(webRequest.GetRequestStream());
-                    request.InputStream.Close();
-                }
 
-                Dictionary<string, object> proxyData = new Dictionary<string, object>();
-                proxyData.Add(Constant.WEB_REQUEST, webRequest);
-                proxyData.Add(Constant.ORIGINAL_CONTEXT, context);
-                webRequest.BeginGetResponse(new AsyncCallback(onWebResponseReceived), proxyData);
+            // send request to TCP end point
+            NetworkStream endPointStream = pStorage.tcpEndPoint.GetStream();
+            dataBytes = Encoding.ASCII.GetBytes(data);
+            endPointStream.Write(dataBytes, 0, dataBytes.Length);
+            endPointStream.Flush();
+            // read response from TCP end point
+            endPointStream.BeginRead(pStorage.buffer, 0, pStorage.buffer.Length, new AsyncCallback(endPointDataReceived), pStorage);
+        }
+
+        /*
+         * Read TCP end point response and copy to client network stream.
+         */
+        private void endPointDataReceived(IAsyncResult result)
+        {
+            var pStorage = (ProxyStorage)result.AsyncState;
+            var clientStream = pStorage.tcpClient.GetStream();
+            var endPointStream = pStorage.tcpEndPoint.GetStream();
+
+            // read the TCP end point response and write to client network stream
+            pStorage.read = endPointStream.EndRead(result);
+            clientStream.Write(pStorage.buffer, 0, pStorage.read);
+            // read and copy any remaining data to client network stream
+            while (endPointStream.DataAvailable)
+            {
+                pStorage.read = endPointStream.Read(pStorage.buffer, 0, pStorage.buffer.Length);
+                clientStream.Write(pStorage.buffer, 0, pStorage.read);
             }
-            */
-            TcpClient tcpEndpoint = null;
+            clientStream.Flush();
+            // clean up connection
+            pStorage.tcpClient.Close();
+            pStorage.tcpEndPoint.Close();
+        }
+
+        /*
+         * Generate the proper TCP end point based on the client request.
+         */
+        private TcpClient generateTcpEndPoint(string[] methodParts)
+        {
+            if (methodParts.Length < 3)
+            {
+                return null;
+            }
+
+            TcpClient tcpEndPoint = null;
+            string url = methodParts[1];
+            Regex extraPattern = new Regex("http://|https://|\\?.*|/.*");
+
+            // try to create a TcpClient for the end point
             try
             {
-                // get the connecting client IO stream
-                NetworkStream clientStream = tcpClient.GetStream();
-                StreamReader clientReader = new StreamReader(clientStream);
-                StreamWriter clientWriter = new StreamWriter(clientStream);
-
-                // get the request method
-                // Ex: GET http://imgur.com/ HTTP/1.1
-                string method = clientReader.ReadLine();
-                if (method == null || method.Length == 0)
-                {
-                    return;
-                }
-                string[] methodParts = method.Split(' ');
-                string url = methodParts[1];
                 if (url.StartsWith("http://"))
                 {
-                    url = url.Replace("http://", "");
-                    url = url.Replace("/", "");
-                    tcpEndpoint = new TcpClient(url, 80);
+                    url = extraPattern.Replace(url, "");
+                    tcpEndPoint = new TcpClient(url, 80);
                 }
                 else if (url.StartsWith("https://"))
                 {
-                    url = url.Replace("https://", "");
-                    url = url.Replace("/", "");
-                    tcpEndpoint = new TcpClient(url, 443);
+                    url = extraPattern.Replace(url, "");
+                    tcpEndPoint = new TcpClient(url, 443);
                 }
                 else if (UrlUtil.isDomainAndPort(url))
                 {
                     string[] urlParts = methodParts[1].Split(':');
-                    tcpEndpoint = new TcpClient(urlParts[0], Int32.Parse(urlParts[1]));
+                    tcpEndPoint = new TcpClient(urlParts[0], Int32.Parse(urlParts[1]));
                 }
-                else
-                {
-                    return;
-                }
-                relayTcpTraffic(tcpClient, tcpEndpoint);
-                relayTcpTraffic(tcpEndpoint, tcpClient);
-            } catch (Exception e)
+            } catch (SocketException e)
             {
-                LOGGER.Error("Failed to relay request.", e);
-            } finally
-            {
-                if (tcpClient != null && tcpClient.Connected)
-                {
-                    tcpClient.Close();
-                }
-                if (tcpEndpoint != null && tcpEndpoint.Connected)
-                {
-                    tcpEndpoint.Close();
-                }
+                LOGGER.Error("Failed to connect to " + url, e);
             }
-        }
-
-        /*
-         * Asynchronous function to handle web response.
-         */
-        private void onWebResponseReceived(IAsyncResult result)
-        {
-            Dictionary<string, object> proxyData = (Dictionary<string, object>)result.AsyncState;
-            HttpWebRequest webRequest = (HttpWebRequest)proxyData[Constant.WEB_REQUEST];
-            HttpListenerContext originalContext = (HttpListenerContext)proxyData[Constant.ORIGINAL_CONTEXT];
-            var originalResponse = originalContext.Response;
-            // fix for domain name resolve errors
-            try
-            {
-                var webResponse = webRequest.EndGetResponse(result);
-                originalResponse.ContentType = webResponse.ContentType;
-                // copy over headers
-                foreach(string key in webResponse.Headers.AllKeys)
-                {
-                    // omit existing heaers and reserved headers
-                    if (!originalResponse.Headers.AllKeys.Contains<string>(key) && !HeaderUtil.isReservedHeader(key))
-                    {
-                        originalResponse.Headers[key] = webResponse.Headers[key];
-                    }
-                }
-                var webResponseStream = webResponse.GetResponseStream();
-                webResponseStream.CopyTo(originalResponse.OutputStream);
-            } catch (Exception e)
-            {
-                originalResponse.StatusCode = (int)HttpStatusCode.NotFound;
-                LOGGER.Error("Web request failed.", e);
-            }
-            originalResponse.OutputStream.Close();
-        }
-
-        /*
-         * Relay traffic from one TcpClient to another.
-         */
-        private void relayTcpTraffic(TcpClient from, TcpClient to)
-        {
-            // get the network streams
-            NetworkStream fromStream = from.GetStream();
-            NetworkStream toStream = to.GetStream();
-            try
-            {
-                // copy data
-                if (from.Connected && to.Connected)
-                {
-                    fromStream.CopyTo(toStream);
-                }
-            } catch(Exception e)
-            {
-                LOGGER.Error("Failed to relay request.", e);
-            } finally
-            {
-                // clean up connections
-                if (from.Connected)
-                {
-                    from.Close();
-                }
-                if (to.Connected)
-                {
-                    to.Close();
-                }
-            }
+            return tcpEndPoint;
         }
     }
 }

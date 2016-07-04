@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Memory\ProxyStorage.cs" />
     <Compile Include="Utils\HeaderUtil.cs" />
     <Compile Include="Proxy\HttpProxyListener.cs" />
     <Compile Include="Utils\BlacklistUtil.cs" />
