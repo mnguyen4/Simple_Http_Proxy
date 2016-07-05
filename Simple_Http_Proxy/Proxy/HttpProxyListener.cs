@@ -175,15 +175,19 @@ namespace Simple_Http_Proxy.Proxy
             var pStorage = (ProxyStorage)result.AsyncState;
             var clientStream = pStorage.tcpClient.GetStream();
             var endPointStream = pStorage.tcpEndPoint.GetStream();
+            string data = "";
 
             // read the TCP end point response and write to client network stream
             pStorage.read = endPointStream.EndRead(result);
             clientStream.Write(pStorage.buffer, 0, pStorage.read);
+            data += Encoding.ASCII.GetString(pStorage.buffer, 0, pStorage.read);
+            
             // read and copy any remaining data to client network stream
             while (endPointStream.DataAvailable)
             {
                 pStorage.read = endPointStream.Read(pStorage.buffer, 0, pStorage.buffer.Length);
                 clientStream.Write(pStorage.buffer, 0, pStorage.read);
+                data += Encoding.ASCII.GetString(pStorage.buffer, 0, pStorage.read);
             }
             clientStream.Flush();
             // clean up connection
